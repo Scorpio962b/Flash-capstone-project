@@ -1,0 +1,16 @@
+{
+  "name": "flash-guard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline fintech apps, API, and DB for QE students.",
+  "scripts": {
+    "stack:up": "npm run stack:up:containers && npm --prefix mobile run start",
+    "stack:up:containers": "docker compose up -d --build && node scripts/seed-after-up.mjs",
+    "stack:up:local": "docker compose up -d --build && node scripts/init-local-db.mjs",
+    "db:init-local": "node scripts/init-local-db.mjs",
+    "stack:down": "docker compose down -v",
+    "stack:logs": "docker compose logs -f",
+    "db:reset-seed": "docker compose --profile seed run --rm app-seed",
+    "api:health": "curl http://localhost:4000/health"
+  }
+}
