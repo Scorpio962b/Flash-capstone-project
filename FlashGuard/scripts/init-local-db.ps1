@@ -5,7 +5,7 @@ Write-Host "Initializing local SQL Server database on $Server,$Port" -Foreground
 $files=@("db/init/01-schema.sql","db/init/99-reset-and-seed.sql")
 
 if (Get-Command sqlcmd -ErrorAction SilentlyContinue) {
-    & sqlcmd -E -S "$Server,$Port" -Q "SELECT 1" 1>$null 2>&1
+    & sqlcmd -C -E -S "$Server,$Port" -Q "SELECT 1" 1>$null 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Error "Windows authentication failed when using sqlcmd."; exit $LASTEXITCODE }
     $runner='sqlcmd'
 } else {
@@ -21,7 +21,7 @@ foreach ($f in $files) {
     if (-not (Test-Path $f)) { Write-Error "SQL file not found: $f"; exit 1 }
     Write-Host "Running: $f" -ForegroundColor Yellow
     if ($runner -eq 'sqlcmd') {
-        & sqlcmd -E -S "$Server,$Port" -i $f -b
+       & sqlcmd -C -E -S "$Server,$Port" -i $f -b
         if ($LASTEXITCODE -ne 0) { Write-Error "sqlcmd failed running $f (exit $LASTEXITCODE)"; exit $LASTEXITCODE }
     } else {
         try { Invoke-Sqlcmd -ServerInstance "$Server,$Port" -InputFile $f -ErrorAction Stop } catch { Write-Error "Invoke-Sqlcmd failed running $f"; exit 3 }
