@@ -16,12 +16,12 @@ Before(async function (this: UserWorld) {
   this.page = await this.context.newPage();
 
   this.apiClient = await request.newContext({
-    baseURL: 'http://localhost:3003'
+    baseURL: 'http://localhost:3000'
   });
 
   // Generate an isolated account via API per scenario
   const response = await this.apiClient.post('/api/accounts', {
-    data: { startingBalance: '300.00' }
+    data: { startingBalance: '20000.00' }
   });
 
   const body = await response.json();
