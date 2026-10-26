@@ -11,6 +11,12 @@
     "stack:down": "docker compose down -v",
     "stack:logs": "docker compose logs -f",
     "db:reset-seed": "docker compose --profile seed run --rm app-seed",
-    "api:health": "curl http://localhost:4000/health"
+    "api:health": "curl http://localhost:4000/health",
+    "test:ui": "cucumber-js --config cucumber.js"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
+    "@playwright/test": "^1.64.1",
+    "tsx": "^4.23.15"
   }
 }
