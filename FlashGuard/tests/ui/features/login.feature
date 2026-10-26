@@ -13,7 +13,7 @@ Examples: Valid Login
  |  Acc-3  - a user log in with valid credentials  | charlie@flashguard.local    | offline-demo  |
  |  Acc-4  - a user log in with valid credentials  | services@flashguard.local   | offline-demo  |
 
-@Invalid login    
+@InvalidLogin
 Examples: Valid Login 
  | Account                                         |  Email Address              | Password      |
  |  Acc-1  - a user log in with valid credentials  | alice@flashguard.local      | offline-demo  |
