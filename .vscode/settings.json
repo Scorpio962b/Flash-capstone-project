@@ -1,0 +1,8 @@
+{
+  "cucumberautocomplete.steps": [
+    "FlashGuard/tests/support/**/*.ts",
+    "FlashGuard/tests/ui/step definition/**/*.ts"
+  ],
+  "cucumberautocomplete.syncfeatures": "FlashGuard/tests/ui/features/**/*.feature",
+  "cucumberautocomplete.stepRegExSymbol": "`"
+}

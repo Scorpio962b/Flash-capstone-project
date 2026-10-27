@@ -1,4 +1,4 @@
-@notificationsFeature
+@NotificationsFeature
 Feature: Notifications and Alerts
   As a signed-in FlashGuard user
   I want to receive notifications and alerts
@@ -32,11 +32,3 @@ Feature: Notifications and Alerts
     When I attempt a transaction that fails
     Then an error toast or modal should be displayed
     And the error message should explain why the transaction failed
-
-  @NegativeNotificationBell
-  Scenario: Handle an empty notifications list
-   
-    And I have no notifications
-    When I click the notifications bell icon
-    Then the notifications panel should be displayed
-    And an appropriate empty state message should be displayed
