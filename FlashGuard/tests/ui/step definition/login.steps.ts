@@ -2,35 +2,50 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { UserWorld } from '../../support/World';
 
+const users: Record<string, { email: string; password: string }> = {
+  alice:   { email: 'alice@flashguard.local',   password: 'offline-demo' },
+  bob:     { email: 'bob@flashguard.local',     password: 'offline-demo' },
+  charlie: { email: 'charlie@flashguard.local', password: 'offline-demo' },
+};
+
+function who(name: string) {
+  const user = users[name];
+  if (!user) throw new Error(`Unknown user: ${name}`);
+  return user;
+}
+
+const logIn = (w: UserWorld, name: string, password = who(name).password) =>
+  w.loginPage.login(who(name).email, password);
+
 // ---------- Given ----------
 Given('the user is on the login page', async function (this: UserWorld) {
   await this.loginPage.open();
 });
 
-Given('the user is logged in as {string} with password {string}',
-  async function (this: UserWorld, email: string, password: string) {
-    await this.loginPage.login(email, password);
-    await this.dashboardPage.expectLoaded();
-  });
+Given('{word} is logged in', async function (this: UserWorld, name: string) {
+  await logIn(this, name);
+  await this.dashboardPage.expectLoaded();
+});
 
 Given('the test is running in Google Chrome', async function () {
   expect(process.env.BROWSER, 'Run with: npm run test:chrome').toBe('chrome');
 });
 
 // ---------- When ----------
-const enterDetails = async function (this: UserWorld, email: string, password: string) {
-  await this.loginPage.login(email, password);
-};
-When('the user enters a valid username {string} and password {string}', enterDetails);
-When('the user enters username {string} and password {string}', enterDetails);
+When('{word} logs in', async function (this: UserWorld, name: string) {
+  await logIn(this, name);
+});
 
-When('the user enters a wrong password {int} times for {string}',
-  async function (this: UserWorld, times: number, email: string) {
-    for (let i = 0; i < times; i++) {
-      await this.loginPage.login(email, 'wrong-password');
-      await this.page.waitForLoadState('networkidle');
-    }
-  });
+When('{word} logs in with a wrong password', async function (this: UserWorld, name: string) {
+  await logIn(this, name, 'onnline-demo');
+});
+
+When('{word} fails to log in {int} times', async function (this: UserWorld, name: string, times: number) {
+  for (let i = 0; i < times; i++) {
+    await logIn(this, name, 'wrong-password');
+    await this.page.waitForLoadState('networkidle');
+  }
+});
 
 When('the user logs out', async function (this: UserWorld) {
   await this.dashboardPage.logout();
@@ -38,37 +53,29 @@ When('the user logs out', async function (this: UserWorld) {
 
 When('the user is inactive for {int} minutes', async function (this: UserWorld, minutes: number) {
   await this.page.clock.fastForward(`${minutes}:01`); // 30 min + 1 sec
-});
-
-When('the user interacts with the application', async function (this: UserWorld) {
-  await this.dashboardPage.interact();
+  await this.dashboardPage.interact();                // any click makes the app check the session
 });
 
 // ---------- Then ----------
-Then('the user is taken to the dashboard', async function (this: UserWorld) {
+Then('the dashboard is shown and the session is saved', async function (this: UserWorld) {
   await this.dashboardPage.expectLoaded();
-});
-
-Then('an invalid credentials error is displayed', async function (this: UserWorld) {
-  await expect(this.loginPage.error).toBeVisible();
-});
-
-Then('the account locked message is displayed', async function (this: UserWorld) {
-  await expect(this.loginPage.locked).toBeVisible();
-});
-
-Then('the login page is displayed', async function (this: UserWorld) {
-  await this.loginPage.expectVisible();
-});
-
-Then('a session expired message is displayed', async function (this: UserWorld) {
-  await expect(this.loginPage.expired).toBeVisible();
-});
-
-Then('the session is saved in session storage', async function (this: UserWorld) {
   expect((await this.sessionKeys()).length).toBeGreaterThan(0);
 });
 
-Then('session storage is empty', async function (this: UserWorld) {
+Then('an invalid credentials error is shown', async function (this: UserWorld) {
+  await expect(this.loginPage.error).toBeVisible();
+});
+
+Then('the account locked message is shown', async function (this: UserWorld) {
+  await expect(this.loginPage.locked).toBeVisible();
+});
+
+Then('the login page is shown and the session is cleared', async function (this: UserWorld) {
+  await this.loginPage.expectVisible();
+  expect(await this.sessionKeys()).toHaveLength(0);
+});
+
+Then('the session expired message is shown and the session is cleared', async function (this: UserWorld) {
+  await expect(this.loginPage.expired).toBeVisible();
   expect(await this.sessionKeys()).toHaveLength(0);
 });
