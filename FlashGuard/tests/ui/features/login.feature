@@ -4,6 +4,7 @@ Scenario Outline: <Account>
   Given the user is on the login page
   When the user enters a valid username '<Email Address>' and password "<Password>"
   Then the user is taken to the dashboard
+  And the session is saved in session storage
 
   @login
   Examples: Valid Login
@@ -20,7 +21,6 @@ Scenario Outline: <Account>
   Examples: Invalid Login
     | Account                                                   | Email Address        | Password     |
     | T-UI-AUTH-003 - a user logs in with an incorrect password | bob@flashguard.local | onnline-demo |
-    | T-UI-AUTH-001 - a user logs in with valid credentials | alce@flashguard.local | offline-demo |
 
 Scenario Outline: <Account>
   Given the user is on the login page
@@ -37,6 +37,7 @@ Scenario Outline: <Account>
   And the user is logged in as '<Email Address>' with password "<Password>"
   When the user logs out
   Then the login page is displayed
+  And session storage is empty
   When the user enters a valid username '<Email Address>' and password "<Password>"
   Then the user is taken to the dashboard
 
@@ -51,6 +52,7 @@ Scenario Outline: <Account>
   When the user is inactive for <Minutes> minutes
   And the user interacts with the application
   Then a session expired message is displayed
+  And session storage is empty
   When the user enters a valid username '<Email Address>' and password "<Password>"
   Then the user is taken to the dashboard
 
@@ -64,6 +66,8 @@ Scenario Outline: <Account>
   And the user is on the login page
   When the user enters a valid username '<Email Address>' and password "<Password>"
   Then the user is taken to the dashboard
+  When the user logs out
+  Then the login page is displayed
 
   @regression @chrome
   Examples: Chrome Regression
