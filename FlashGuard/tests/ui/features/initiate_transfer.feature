@@ -1,19 +1,21 @@
-Feature: Initiate successful money transfers
-  As a system rule requirement
-  I want to validate money transfers to an account from a beneficiary
-  So that incorrect or unauthorized money transfers are rejected
-  
-  Background: 
-  Given I navigate to transfer funds feature 
-  
-  
+Feature: Initiate money transfer requests
+  As a system user
+  I want to initiate a money transfer to a beneficiary
+  So that the transfer request is accepted but only completed after OTP authentication
 
+  Background:
+    Given I navigate to the transfer funds feature
+    
   Scenario Outline: <case>
     When I select "<Account>" from Accounts tab
     And I select "<Beneficiary>" from Beneficiaries
     And I select "<Amount>" ZAR that I want to transfer
     Then I see the "<expectedMessage>" result for my transfer request
     And my "<Balance>" shows correctly
+    And the transaction status is "PENDING"
+    And I must complete OTP authentication on the mobile side
+    And the transfer must not be marked as "COMPLETED" before OTP authentication
+
     
 
 @smoke
