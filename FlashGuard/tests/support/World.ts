@@ -13,9 +13,11 @@ export class UserWorld extends World {
   constructor(options: IWorldOptions) {
     super(options);
   }
+
   // Names of everything currently in the browser's session storage
   sessionKeys() {
     return this.page.evaluate(() => Object.keys(sessionStorage));
   }
 }
+
 setWorldConstructor(UserWorld);

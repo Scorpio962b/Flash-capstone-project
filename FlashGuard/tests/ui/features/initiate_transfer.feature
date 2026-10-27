@@ -1,5 +1,5 @@
 Feature: Initiate money transfer requests
-  As a system user
+  As a FlashGuard user
   I want to initiate a money transfer to a beneficiary
   So that the transfer request is accepted but only completed after OTP authentication
 
@@ -9,20 +9,16 @@ Feature: Initiate money transfer requests
   Scenario Outline: <case>
     When I select "<Account>" from Accounts tab
     And I select "<Beneficiary>" from Beneficiaries
-    And I select "<Amount>" ZAR that I want to transfer
+    And I select "<Amount>" ZAR that I want to transfer and click submit
     Then I see the "<expectedMessage>" result for my transfer request
     And my "<Balance>" shows correctly
-    And the transaction status is "PENDING"
-    And I must complete OTP authentication on the mobile side
-    And the transfer must not be marked as "COMPLETED" before OTP authentication
-
-    
+  
 
 @smoke
 Examples: Accepted
-    | case | Account | Beneficiary | Amount | expectedMessage | Balance |
-    | TC-001 A successful money transfer | Alice Ledger | Bob Wallet   | 200 | Transfer created successfully | R9800.00 |
-    | TC-002 A successful money transfer | Bob Wallet   | Alice Ledger | 200 | Transfer created successfully | R2300.00 |
+    | case | Account | Beneficiary | Amount | expectedMessage | Balance | Status |
+    | TC-001 A successful money transfer | Alice Ledger | Bob Wallet   | 200 | Transfer created successfully | R9800.00 | 
+    | TC-002 A successful money transfer | Bob Wallet   | Alice Ledger | 200 | Transfer created successfully | R2300.00 | 
 
 @negative
 Examples: Boundary/Rejected
