@@ -3,7 +3,7 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { CustomWorld } from '../../support/World';
+import type { CustomWorld } from '../../support/World';
 
 interface FlashWorld extends CustomWorld {
   page: Page;
