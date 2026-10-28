@@ -3,9 +3,9 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { CustomWorld } from '../../support/World';
+import { UserWorld } from '../../support/World';
 
-interface TransferWorld extends CustomWorld {
+interface TransferWorld extends UserWorld {
   page: Page;
 }
 

@@ -27,5 +27,5 @@ Examples: Accepted
 @negative
 Examples: Boundary/Rejected
     | case | Account | Beneficiary| Amount | expectedMessage | Balance |
-    | TC-003 - Transfer the minimum amount, R0.01  | Alice Ledger  | Bob Wallet | 0.01 | Transfer created successfully | R9999.99
-    | TC-004 - Transfer no amount, R0.00  |  Bob Wallet  | Alice Ledger | 0 | Invalid transfer payload | R2500.00
+    | TC-003 - Transfer the minimum amount, R0.01  | Alice Ledger  | Bob Wallet | 0.01 | Transfer created successfully | R9999.99 |
+    | TC-004 - Transfer no amount, R0.00  |  Bob Wallet  | Alice Ledger | 0 | Invalid transfer payload | R2500.00|

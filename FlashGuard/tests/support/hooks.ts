@@ -1,47 +1,38 @@
 import { BeforeAll, AfterAll, Before, After, Status, setDefaultTimeout } from '@cucumber/cucumber';
-import { chromium, Browser, request } from 'playwright';
-import { UserWorld } from './World';
-
+import { chromium, Browser } from '@playwright/test';
+import { UserWorld } from './World';  
+import { LoginPage } from '../../src/pages/LoginPage';
+import { DashboardPage } from '../../src/pages/dashboardPage';
 setDefaultTimeout(30 * 1000);
 
-let globalBrowser: Browser;
+let browser: Browser;
 
 BeforeAll(async function () {
-  globalBrowser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({
+    headless: true,
+    channel: process.env.BROWSER === 'chrome' ? 'chrome' : undefined, // real Google Chrome
+  });
 });
 
-Before(async function (this: UserWorld) {
-  this.browser = globalBrowser;
-  this.context = await this.browser.newContext();
+Before(async function (this: UserWorld, { pickle }) {
+  this.browser = browser;
+  this.context = await browser.newContext({ baseURL: 'http://localhost:3000' });
   this.page = await this.context.newPage();
 
-  this.apiClient = await request.newContext({
-    baseURL: 'http://localhost:3000'
-  });
+  // Fake clock so the 30-minute timeout test doesn't take 30 minutes
+  if (pickle.tags.some((t) => t.name === '@clock')) await this.page.clock.install();
 
-  // Generate an isolated account via API per scenario
-  const response = await this.apiClient.post('/api/accounts', {
-    data: { startingBalance: '20000.00' }
-  });
-
-  const body = await response.json();
-  this.accountId = body.accountId;
-  this.startingBalance = body.balance;
+  this.loginPage = new LoginPage(this.page);
+  this.dashboardPage = new DashboardPage(this.page);
 });
 
 After(async function (this: UserWorld, scenario) {
-  if (scenario.result?.status === Status.FAILED && this.page) {
-    const screenshot = await this.page.screenshot();
-    this.attach(screenshot, 'image/png');
+  if (scenario.result?.status === Status.FAILED) {
+    this.attach(await this.page.screenshot(), 'image/png');
   }
-
-  if (this.page) await this.page.close();
-  if (this.context) await this.context.close();
-  if (this.apiClient) await this.apiClient.dispose();
+  await this.context.close();
 });
 
 AfterAll(async function () {
-  if (globalBrowser) {
-    await globalBrowser.close();
-  }
+  await browser.close();
 });
