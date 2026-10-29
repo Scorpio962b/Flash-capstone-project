@@ -211,7 +211,7 @@ export default function DashboardPage({ session, notify }) {
           </div>
           <div className="divide-y divide-outline-variant">
             {transactions.length > 0 ? (
-              transactions.slice(0, 4).map((tx, i) => {
+              transactions.slice(0, 3).map((tx, i) => {
                 // Determine icon and colors based on status/type conceptually
                 const isCredit = tx.status === "completed"; // simplified
                 const icon = isCredit ? "arrow_downward" : "shopping_cart";

@@ -1,17 +1,10 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect, Page } from '@playwright/test';
-import { CustomWorld } from '../../support/World';
+import { UserWorld } from '../../support/World';
+import { expectAccountBalance, mockAccountBalance, updateMockAccountBalance, } from '../../support/helpers';
 
-interface DashboardWorld extends CustomWorld { page: Page }
+interface DashboardWorld extends UserWorld { page: Page }
 
-// Format used in dashboard
-function formatBalance(balance: string): string {
-
-  const amount = Number(balance);
-  if (!Number.isFinite(amount)) { throw new Error(`Invalid balance: "${balance}"`) }
-  return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2,}).format(amount).replace(/\u202f/g, ' ');
-
-}
 
 // The Background sign-in step should be defined once in a shared step file.
 Given(`I am signed in`, async function (this: DashboardWorld) {
@@ -37,7 +30,7 @@ Then(`my account balance should be displayed`, async function (this: DashboardWo
   });
 
 Then(`recent transaction details should be displayed`, async function (this: DashboardWorld) {
-    const transactions = this.page.getByTestId('recent-transaction');
+    const transactions = this.page.getByText(/^Transfer #\d+$/);
 
     await expect(transactions.first()).toBeVisible();
     await expect(this.page.getByText('Transfer #3')).toBeVisible();
@@ -49,43 +42,53 @@ Then(`recent transaction details should be displayed`, async function (this: Das
 // @IntegrationBalanceAccuracyDisplay
 // And the account balance is "<expectedBalance>"
 Given(`the account balance is {string}`, async function (this: DashboardWorld, expectedBalance: string) {
-    const formattedExpectedBalance = formatBalance(expectedBalance);
-    await expect(this.page.getByText(formattedExpectedBalance, { exact: false })).toBeVisible();
+    await mockAccountBalance(this, expectedBalance);
 });
 
 // The When step "I open the dashboard" is defined above.
 Then(`the displayed balance should be {string}`, async function (this: DashboardWorld, expectedBalance: string) {
-    const formattedExpectedBalance = formatBalance(expectedBalance);
-    await expect(this.page.getByText(formattedExpectedBalance, { exact: false })).toBeVisible();
+    await expectAccountBalance(this, expectedBalance);
   });
 
 // @FunctionalBalanceAccuracy
 // And my initial balance is "<initialBalance>"
 Given(`my initial balance is {string}`, async function (this: DashboardWorld, initialBalance: string) {
-    const formattedInitialBalance = formatBalance(initialBalance);
-    await expect(this.page.getByText(formattedInitialBalance, { exact: false })).toBeVisible();
+    await mockAccountBalance(this, initialBalance);
+    await this.page.goto('http://localhost:3000/dashboard');
+    await expectAccountBalance(this, initialBalance);
   });
 
 // When my account balance is updated to "<updatedBalance>"
 When(`my account balance is updated to {string}`, async function (this: DashboardWorld, updatedBalance: string) {
-    const formattedUpdatedBalance = formatBalance(updatedBalance);
-    await expect(this.page.getByText(formattedUpdatedBalance, { exact: false })).toBeVisible();
+    await updateMockAccountBalance(this, updatedBalance);
+    await this.page.goto('http://localhost:3000/dashboard');
   });
 
 // Then the dashboard should display "<updatedBalance>"
 Then(`the dashboard should display {string}`, async function (this: DashboardWorld, expectedBalance: string) {
-    const formattedUpdatedBalance = formatBalance(expectedBalance);
-    await expect(this.page.getByText(formattedUpdatedBalance, { exact: false })).toBeVisible();
+    await expectAccountBalance(this, expectedBalance);
   });
 
 
 // @FunctionalRecentTransactionsDisplay
 // And the account containing <transactionCount> transactions
 Given(`the account containing {int} transactions`, async function (this: DashboardWorld, transactionCount: number) {
-   await expect(this.page.getByTestId('recent-transaction')).toHaveCount(transactionCount);
+   const transactions = Array.from({ length: transactionCount }, (_, index) => ({
+     id: index + 1,
+     sender_account_id: 1,
+     recipient_account_id: 2,
+     transaction_type: 'transfer',
+     amount: 25,
+     status: 'pending',
+     created_at: new Date().toISOString(),
+   }));
+   await this.page.route(
+     (url) => url.pathname === '/transactions/history',
+     (route) => route.fulfill({ json: transactions }),
+   );
   });
 
 // The When step "I open the dashboard" is defined above.
 Then(`I should see {int} recent transactions`, async function (this: DashboardWorld, expectedCount: number) {
-    await expect(this.page.getByTestId('recent-transaction')).toHaveCount(expectedCount);
+    await expect(this.page.getByText(/^Transfer #\d+$/)).toHaveCount(expectedCount);
   });
