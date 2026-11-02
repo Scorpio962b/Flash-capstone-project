@@ -8,6 +8,8 @@ interface ManageAccountWorld extends UserWorld{
     page: Page
 };
 
+// Account Profile update
+
 Given('I am logged in and see the homepage ', async function(this: ManageAccountWorld): Promise<void> {
      await this.page.goto('http://localhost:3000');
      await this.page.getByRole('textbox', {name: 'Email address'}).fill('alice@flashguard.local');
@@ -47,6 +49,7 @@ Then('I see {string} result', async function(this:ManageAccountWorld): Promise<v
 
 });
 
+// Add Payment Methods 
 
 Given('I am logged in and see the homepage ', async function(this: ManageAccountWorld): Promise<void> {
      await this.page.goto('http://localhost:3000');
