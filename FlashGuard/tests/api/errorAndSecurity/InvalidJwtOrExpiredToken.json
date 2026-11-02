@@ -1,0 +1,98 @@
+[
+
+   {
+    "Request, without token": { 
+        "method": "GET",
+        "url": "http://localhost:4000/accounts",
+        "JWT Token": " " 
+    }, 
+
+    "Response": {
+        "status": 200,
+        "Accounts": [
+    {
+        "id": 1,
+        "email": "alice@flashguard.local",
+        "full_name": "Alice Ledger",
+        "balance": 10000,
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "email": "bob@flashguard.local",
+        "full_name": "Bob Wallet",
+        "balance": 2500,
+        "is_active": true
+    },
+    {
+        "id": 3,
+        "email": "charlie@flashguard.local",
+        "full_name": "Charlie Frozen",
+        "balance": 450,
+        "is_active": false
+    },
+    {
+        "id": 4,
+        "email": "services@flashguard.local",
+        "full_name": "FlashGuard Mobile Services",
+        "balance": 0,
+        "is_active": true
+    },
+    {
+        "id": 6,
+        "email": "polite@dlamini.local",
+        "full_name": "Polite Dlamini",
+        "balance": 0,
+        "is_active": true
+    }]}},
+ 
+
+
+   {
+    "Request, with invalid token": {
+        "method": "GET",
+        "url": "http://localhost:4000/accounts",
+        "JWT Token": "this-is-not-a-valid-jwt-token"
+    }, 
+
+    "Response": {
+        "status": 200,
+        "Accounts": [ 
+    {
+        "id": 1,
+        "email": "alice@flashguard.local",
+        "full_name": "Alice Ledger",
+        "balance": 10000,
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "email": "bob@flashguard.local",
+        "full_name": "Bob Wallet",
+        "balance": 2500,
+        "is_active": true
+    },
+    {
+        "id": 3,
+        "email": "charlie@flashguard.local",
+        "full_name": "Charlie Frozen",
+        "balance": 450,
+        "is_active": false
+    },
+    {
+        "id": 4,
+        "email": "services@flashguard.local",
+        "full_name": "FlashGuard Mobile Services",
+        "balance": 0,
+        "is_active": true
+    },
+    {
+        "id": 6,
+        "email": "polite@dlamini.local",
+        "full_name": "Polite Dlamini",
+        "balance": 0,
+        "is_active": true
+    },
+    {
+    "JWT Token": "DEFECT: The API should have returned a 401 Unauthorized error for an invalid JWT token, but it returned a 200 OK response with account data."
+    }]}}] 
