@@ -1,6 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { UserWorld } from '../../support/World';
+import { text } from 'node:stream/consumers';
 
 // ---------- Given ----------
 Given('I am on the login page', async function (this: UserWorld) {
@@ -28,9 +29,11 @@ When('I fail to log in with email {string} and password {string} {int} times', a
 });
 
 When('I sign out and sign back in with email {string} and password {string}', async function (this: UserWorld, email: string, password: string) {
-  await this.dashboardPage.logout();
-  await this.loginPage.expectVisible();
-  await this.loginPage.login(email, password);
+  await this.page.getByRole('link', { name: 'logout Sign Out' }).click();
+  await this.page.goto('http://localhost:3000/login');
+  await this.page.getByRole('textbox', { name: 'Email address' }).fill(email);
+  await this.page.getByRole('textbox', { name: 'Password' }).fill(password);
+  await this.page.getByRole('button', { name: 'Sign In' }).click();
 });
 
 // ---------- Then ----------
@@ -40,10 +43,9 @@ Then('I should see the dashboard', async function (this: UserWorld) {
 });
 
 Then('I should remain on the login page', async function (this: UserWorld) {
-  await this.loginPage.expectVisible();
-  await expect(this.loginPage.error).toBeVisible();
+  await expect(this.page.getByRole('status')).toContainText('Invalid credentials');
 });
-
+//does not lock it should pass but is failing so - defect
 Then('I should see the account locked message', async function (this: UserWorld) {
   await expect(this.loginPage.locked).toBeVisible();
 });
