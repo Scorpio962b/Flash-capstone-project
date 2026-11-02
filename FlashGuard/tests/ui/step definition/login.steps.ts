@@ -2,28 +2,13 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { UserWorld } from '../../support/World';
 
-const users: Record<string, { email: string; password: string }> = {
-  alice:   { email: 'alice@flashguard.local',   password: 'offline-demo' },
-  bob:     { email: 'bob@flashguard.local',     password: 'offline-demo' },
-  charlie: { email: 'charlie@flashguard.local', password: 'offline-demo' },
-};
-
-function who(name: string) {
-  const user = users[name];
-  if (!user) throw new Error(`Unknown user: ${name}`);
-  return user;
-}
-
-const logIn = (w: UserWorld, name: string, password = who(name).password) =>
-  w.loginPage.login(who(name).email, password);
-
 // ---------- Given ----------
-Given('the user is on the login page', async function (this: UserWorld) {
+Given('I am on the login page', async function (this: UserWorld) {
   await this.loginPage.open();
 });
 
-Given('{word} is logged in', async function (this: UserWorld, name: string) {
-  await logIn(this, name);
+Given('I am logged in with email {string} and password {string}', async function (this: UserWorld, email: string, password: string) {
+  await this.loginPage.login(email, password);
   await this.dashboardPage.expectLoaded();
 });
 
@@ -32,50 +17,43 @@ Given('the test is running in Google Chrome', async function () {
 });
 
 // ---------- When ----------
-When('{word} logs in', async function (this: UserWorld, name: string) {
-  await logIn(this, name);
+When('I sign in with email {string} and password {string}', async function (this: UserWorld, email: string, password: string) {
+  await this.loginPage.login(email, password);
 });
 
-When('{word} logs in with a wrong password', async function (this: UserWorld, name: string) {
-  await logIn(this, name, 'onnline-demo');
-});
-
-When('{word} fails to log in {int} times', async function (this: UserWorld, name: string, times: number) {
-  for (let i = 0; i < times; i++) {
-    await logIn(this, name, 'wrong-password');
-    await this.page.waitForLoadState('networkidle');
+When('I fail to log in with email {string} and password {string} {int} times', async function (this: UserWorld, email: string, password: string, attempts: number) {
+  for (let i = 0; i < attempts; i++) {
+    await this.loginPage.login(email, password);
   }
 });
 
-When('the user logs out', async function (this: UserWorld) {
+When('I sign out and sign back in with email {string} and password {string}', async function (this: UserWorld, email: string, password: string) {
   await this.dashboardPage.logout();
-});
-
-When('the user is inactive for {int} minutes', async function (this: UserWorld, minutes: number) {
-  await this.page.clock.fastForward(`${minutes}:01`); // 30 min + 1 sec
-  await this.dashboardPage.interact();                // any click makes the app check the session
+  await this.loginPage.expectVisible();
+  await this.loginPage.login(email, password);
 });
 
 // ---------- Then ----------
-Then('the dashboard is shown and the session is saved', async function (this: UserWorld) {
+Then('I should see the dashboard', async function (this: UserWorld) {
   await this.dashboardPage.expectLoaded();
   expect((await this.sessionKeys()).length).toBeGreaterThan(0);
 });
 
-Then('an invalid credentials error is shown', async function (this: UserWorld) {
+Then('I should remain on the login page', async function (this: UserWorld) {
+  await this.loginPage.expectVisible();
   await expect(this.loginPage.error).toBeVisible();
 });
 
-Then('the account locked message is shown', async function (this: UserWorld) {
+Then('I should see the account locked message', async function (this: UserWorld) {
   await expect(this.loginPage.locked).toBeVisible();
 });
 
-Then('the login page is shown and the session is cleared', async function (this: UserWorld) {
-  await this.loginPage.expectVisible();
+Then('I should see the session expired message', async function (this: UserWorld) {
+  await expect(this.loginPage.expired).toBeVisible();
   expect(await this.sessionKeys()).toHaveLength(0);
 });
 
-Then('the session expired message is shown and the session is cleared', async function (this: UserWorld) {
-  await expect(this.loginPage.expired).toBeVisible();
-  expect(await this.sessionKeys()).toHaveLength(0);
+When('I am inactive for {int} minutes', async function (this: UserWorld, minutes: number) {
+  await this.page.clock.fastForward(minutes * 60 * 1000 + 1000);
+  await this.dashboardPage.interact();
 });

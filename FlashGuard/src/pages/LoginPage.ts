@@ -3,9 +3,9 @@ import { Page, expect } from '@playwright/test';
 export class LoginPage {
   constructor(private page: Page) {}
 
-  get error()   { return this.page.getByTestId('login-error')};
-  get locked()  { return this.page.getByTestId('account-locked')};
-  get expired() { return this.page.getByTestId('session-expired')};
+  get error(){ return this.page.getByTestId('login-error')};
+  get locked(){ return this.page.getByTestId('account-locked')};
+  get expired(){ return this.page.getByTestId('session-expired')};
 
   async open() {
     await this.page.goto('http://localhost:3000');

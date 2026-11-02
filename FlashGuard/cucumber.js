@@ -7,8 +7,6 @@ module.exports = {
       'tests/ui/step definition/**/*.ts'
     ],
 
-    paths: ['tests/ui/features/**/*.feature'],
-
     format: [
       'progress',
       'html:reports/cucumber-report.html',

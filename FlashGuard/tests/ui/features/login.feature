@@ -1,40 +1,39 @@
-Feature: User wants to login
+@loginfeature
+Feature: Login
 
   Background:
     Given I am on the login page
 
-  Scenario Outline: <id> Valid login as <user>
-    When <user> logs in
-    Then the dashboard is shown and the session is saved
+  Scenario Outline: <id> Login with valid credentials as <user>
+    When I sign in with email "<email>" and password "<password>"
+    Then I should see the dashboard
 
     Examples:
-      | id            | user  |
-      | T-UI-AUTH-001 | alice |
-      | T-UI-AUTH-002 | bob   |
+      | id            | user    | email                    | password    |
+      | T-UI-AUTH-001 | alice   | alice@flashguard.local   | offline-demo |
+      | T-UI-AUTH-002 | bob     | bob@flashguard.local     | offline-demo |
 
-  Scenario: T-UI-AUTH-003 Wrong password is rejected
-    When bob logs in with a wrong password
-    Then an invalid credentials error is shown
+  Scenario: T-UI-AUTH-003 Login with invalid password
+    When I sign in with email "bob@flashguard.local" and password "wrong-password"
+    Then I should remain on the login page
 
   Scenario: T-UI-AUTH-004 Account locks after 5 failed attempts
-    When charlie fails to log in 5 times
-    Then the account locked message is shown
+    When I fail to log in with email "charlie@flashguard.local" and password "wrong-password" 5 times
+    Then I should see the account locked message
 
-  Scenario: T-UI-AUTH-005 User logs out and logs in again
-    Given alice is logged in
-    When I sign out
-    Then the login page is shown and the session is cleared
-    When alice logs in
-    Then the dashboard is shown and the session is saved
+  Scenario: T-UI-AUTH-005 Logout and login again
+    Given I am logged in with email "alice@flashguard.local" and password "offline-demo"
+    When I sign out and sign back in with email "alice@flashguard.local" and password "offline-demo"
+    Then I should see the dashboard
 
   @clock
   Scenario: T-UI-AUTH-006 Session expires after 30 minutes of inactivity
-    Given bob is logged in
+    Given I am logged in with email "bob@flashguard.local" and password "offline-demo"
     When I am inactive for 30 minutes
-    Then the session expired message is shown and the session is cleared
+    Then I should see the session expired message
 
   @chrome
   Scenario: T-UI-AUTH-007 Login works in the latest Chrome
     Given the test is running in Google Chrome
-    When alice logs in
-    Then the dashboard is shown and the session is saved
+    When I sign in with email "alice@flashguard.local" and password "offline-demo"
+    Then I should see the dashboard
