@@ -13,7 +13,6 @@
     "db:reset-seed": "docker compose --profile seed run --rm app-seed",
     "api:health": "curl http://localhost:4000/health",
     "test:ui": "cucumber-js --config cucumber.js"
-    
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.3.0",
