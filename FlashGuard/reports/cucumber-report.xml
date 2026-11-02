@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<testsuite name="Cucumber" time="12.052" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-29T06:17:42.443Z">
+  <testcase classname="Notifications and Alerts" name="Known defect - the notifications bell does not open a panel" time="7.128">
+    <system-out><![CDATA[Given I am signed in with a valid account...................................passed
+And I am on the account dashboard...........................................passed
+When I click the notifications bell icon....................................passed
+Then the notifications panel should remain unavailable......................passed
+And no notification entries should be displayed.............................passed]]></system-out>
+  </testcase>
+  <testcase classname="Notifications and Alerts" name="Display a notification after a successful transfer" time="1.422">
+    <system-out><![CDATA[Given I am signed in with a valid account...................................passed
+And I have sufficient funds to make a transfer..............................passed
+When I complete a successful money transfer.................................passed
+Then a transfer success notification should be displayed....................passed
+And the notification should confirm that the transfer was successful........passed]]></system-out>
+  </testcase>
+  <testcase classname="Notifications and Alerts" name="Known defect - account alerts are not displayed on the dashboard" time="1.392">
+    <system-out><![CDATA[Given I am signed in with a valid account...................................passed
+Given a high-value account alert is available...............................passed
+When I open the account dashboard...........................................passed
+Then the account alert should not be displayed on the dashboard.............passed
+And the account alert details should remain unavailable in the dashboard....passed]]></system-out>
+  </testcase>
+  <testcase classname="Notifications and Alerts" name="Display an error message when a transaction fails" time="1.285">
+    <system-out><![CDATA[Given I am signed in with a valid account...................................passed
+When I attempt a transaction that fails.....................................passed
+Then an error toast or modal should be displayed............................passed
+And the error message should explain why the transaction failed.............passed]]></system-out>
+  </testcase>
+</testsuite>
