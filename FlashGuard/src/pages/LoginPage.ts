@@ -11,11 +11,12 @@ export class LoginPage {
     await this.page.goto('http://localhost:3000');
     await this.page.getByRole('link', { name: 'Sign In' }).click();
   }
-  async login(email: string, password: string) {
-    await this.page.getByRole('textbox', { name: 'Email address' }).fill(email);
-    await this.page.getByRole('textbox', { name: 'Password' }).fill(password);
-    await this.page.getByRole('button', { name: 'Sign In' }).click();
-  }
+async login(email: string, password: string) {
+  await this.page.getByRole('textbox', { name: 'Email address' }).fill(email);
+  await this.page.getByRole('textbox', { name: 'Password' }).fill(password);
+  await this.page.getByRole('button', { name: 'Sign In' }).click();
+  await this.page.waitForLoadState('networkidle');
+}
   async expectVisible() {
     await expect(this.page.getByRole('button', { name: 'Sign In' })).toBeVisible();
   }

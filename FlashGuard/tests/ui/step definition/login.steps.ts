@@ -1,7 +1,7 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { UserWorld } from '../../support/World';
-import { text } from 'node:stream/consumers';
+
 
 // ---------- Given ----------
 Given('I am on the login page', async function (this: UserWorld) {
@@ -14,7 +14,7 @@ Given('I am logged in with email {string} and password {string}', async function
 });
 
 Given('the test is running in Google Chrome', async function () {
-  expect(process.env.BROWSER, 'Run with: npm run test:chrome').toBe('chrome');
+  expect(this.browser.browserType().name()).toBe('chromium');
 });
 
 // ---------- When ----------
