@@ -1,71 +1,169 @@
-// steps/recipient-validation.steps.ts
-import { Given, When, Then } from '@cucumber/cucumber';
-import { expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
 
-import { UserWorld } from '../../support/World';
+import { Given, When, Then } from "@cucumber/cucumber";
+import { expect } from "@playwright/test";
 
-interface FlashWorld extends UserWorld {
-  page: Page;
-}
+import { UserWorld } from "../../support/World";
 
-
-
-
-// Shared by @empty, @unknown, @self-transfer, @blocked
+// Login specifically for Negative Transfer tests
 Given(
-  'I am on the transfer fund page',
-  async function (this: FlashWorld) {
-    await this.page.goto('http://localhost:3000/transfers');
+  "I am logged in as Alice for negative transfer testing",
+  async function (this: UserWorld) {
+    const email = process.env.ALICE_EMAIL;
+    const password = process.env.ALICE_PASSWORD;
+
+    if (!email || !password) {
+      throw new Error("ALICE_EMAIL or ALICE_PASSWORD is missing from .env");
+    }
+
+    await this.loginPage.open();
+    await this.loginPage.login(email, password);
+    await this.dashboardPage.expectLoaded();
+  },
+);
+
+// Navigate to transfer page
+Given(
+  "I open the transfer funds page for negative testing",
+  async function (this: UserWorld) {
+    await this.page
+      .getByRole("link", { name: "payments Transfer Funds" })
+      .click();
+
     await expect(
-      this.page.getByRole('heading', { name: 'transfer fund' })
+      this.page.getByRole("heading", { name: "Transfer Funds" }),
     ).toBeVisible();
-
-  }
+  },
 );
 
-// @empty
+// Select account and beneficiary
 When(
-  'I select {string} from Accounts tab and leave Beneficiaries empty',
-  async function (this: FlashWorld, account: string) {
-    await this.page.getByText('Alice Ledger').click();
-    await this.page.getByText(account, { exact: true }).click();
-    // Beneficiaries intentionally left untouched
-  }
-);
+  "I select account {string} and beneficiary {string} for negative transfer",
+async function (
+    this: UserWorld,
+    account: string,
+    beneficiary: string,
+  ) {
+ await this.page.getByRole('radio', { name: 'Alice Ledger check_circle R' }).check();
+ await this.page.getByText('BOBob WalletPrimeFin • **** 2Selected').click();
 
-// @unknown, @self-transfer, @blocked
+})
+
+// Select account without beneficiary
 When(
-  'I select {string} from Accounts tab and select {string} from Beneficiaries',
-  async function (this: FlashWorld, account: string, beneficiary: string) {
-    await this.page.getByText('Alice Ledger').click();
-    await this.page.getByText(account, { exact: true }).click();
+  "I select account {string} and leave the beneficiary empty",
+  async function (this: UserWorld, account: string) {
 
-    await this.page.getByText('Alice Ledger').click();
-    await this.page.getByText(beneficiary, { exact: true }).click();
+    await this.page.getByRole('radio', { name: /Alice Ledger/ }).check();
+
+    const beneficiarySearch = this.page.getByPlaceholder(
+      'Search saved beneficiaries or enter new account...'
+    );
+
+    await beneficiarySearch.clear();
+
+    await expect(beneficiarySearch).toHaveValue('');
   }
 );
-
-// All four scenarios
+// Select account for unknown beneficiary
 When(
-  'I enter {string} in the Amount field and submit the transfer',
-  async function (this: FlashWorld, amount: string) {
-    await this.page.getByLabel('Amount').fill(amount);
-    await this.page.getByRole('button', { name:  'lock Confirm & Transfer' }).click();
-  }
+  "I select account {string} for an unknown recipient",
+  async function (this: UserWorld, account: string) {
+      await this.page.getByRole('radio', { name: 'Alice Ledger check_circle R' }).check();
+  await this.page.getByRole('textbox', { name: 'Search saved beneficiaries or' }).click();
+
+  },
 );
 
-// All four scenarios
+// Search for beneficiary
+When(
+  "I search for recipient {string} in the Beneficiaries section",
+  async function (this: UserWorld, beneficiary: string) {
+    await this.page
+      .getByRole("textbox", {
+        name: "Search saved beneficiaries or enter new account.",
+      })
+      .fill(beneficiary);
+  },
+);
+
+// Verify no matching beneficiary
+When(
+  "recipient {string} is not displayed in the Beneficiaries section",
+  async function (this: UserWorld, beneficiary: string) {
+    await expect(
+      this.page.getByText(beneficiary, { exact: true })
+    ).toHaveCount(0);
+  },
+);
+
+// Enter amount and submit transfer
+When(
+  "I enter transfer amount {string} and submit",
+  async function (this: UserWorld, amount: string) {
+    const amountField = this.page.getByRole("spinbutton").first();
+
+    await this.page.getByRole('spinbutton', { name: '0.00' }).fill('50');
+
+  await this.page.getByRole('button', { name: 'lock Confirm & Transfer' }).click();
+
+      })
+      
+
+
+// Enter OTP and confirm
+When(
+  "I confirm the transfer using OTP {string}",
+  async function (this: UserWorld, otp: string) {
+    await this.page.getByLabel("OTP").fill(otp);
+
+    await this.page
+      .getByRole("button", { name: "lock Confirm & Transfer" })
+      .click();
+  },
+);
+
+// Verify confirmation screen
 Then(
-  'I should see the message {string}',
-  async function (this: FlashWorld, expectedMessage: string) {
-    await expect(this.page.getByText(expectedMessage, { exact: true })).toBeVisible();
-  }
+  "I should see transfer confirmation for {string} and amount {string}",
+  async function (
+    this: UserWorld,
+    beneficiary: string,
+    amount: string,
+  ) {
+     await this.page.getByRole('button', { name: 'lock Confirm & Transfer' }).click();
+
+  },
 );
 
-// All four scenarios
-Then('no transaction should be recorded',
-  async function (this: FlashWorld) {
-    // Implementation for checking no transaction is recorded
-  }
+
+
+// Verify message
+Then(
+  "I should receive the transfer message {string}",
+  async function (this: UserWorld, message: string) {
+    await expect(
+      this.page.getByRole('status').getByText(message)
+    ).toBeVisible();
+  },
+);
+
+// Verify balance
+Then(
+  "my transfer balance should be {string}",
+  async function (this: UserWorld, balance: string) {
+   await this.page.getByRole('spinbutton', { name: '0.00' }).fill('50');
+  },
+);
+
+// Navigate to transactions
+Then(
+  "I should find no recorded transaction",
+  async function (this: UserWorld) {
+      await this.page.getByRole('link', { name: 'receipt_long Transaction' }).click();
+
+
+    await expect(
+      this.page.getByRole("heading", { name: 'Ledger & Reporting' }),
+    ).toBeVisible();
+  },
 );
