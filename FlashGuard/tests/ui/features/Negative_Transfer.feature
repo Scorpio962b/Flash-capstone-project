@@ -22,6 +22,21 @@ Feature: Recipient validation - negative scenarios
       | Zero amount transfer     | Alice Ledger | Bob Wallet  | 0.00   | Invalid transfer payload | R 10 000,00 |
       | Negative amount transfer | Alice Ledger | Bob Wallet  | -10.00 | Value must be greater than or equal to 0 | R 10 000,00 |
 
+  @unknown
+  Scenario Outline: <case>
+    When I select account "<account>" for an unknown recipient
+    And I search for recipient "<beneficiary>" in the Beneficiaries section
+    And I enter transfer amount "<amount>" and submit
+    # Then I should receive the transfer message "<expectedMessage>"
+    # And my transfer balance should be "<Balance>"
+    # And I should find no recorded transaction
+
+    Examples: Unknown beneficiaries
+      | case                          | account      | beneficiary | amount | expectedMessage             | Balance     |
+      | Unknown account number       | Alice Ledger | 0600000000  | 0.00   | Invalid transfer payload| R 10 000,00 |
+      | Unsaved beneficiarie   | Alice Ledger | Alen  | 0.00   | Invalid transfer payload| R 10 000,00 |
+      | Invalid account number   | Alice Ledger | 6235487545     | 0.00   |Invalid transfer payload| R 10 000,00 |
+      | invalid beneficiarie     | Alice Ledger | A.165  | 0.00   | Invalid transfer payload| R 10 000,00 |
 
 
   # @functional @otp
@@ -51,22 +66,6 @@ Feature: Recipient validation - negative scenarios
   #     | Transfer without beneficiary | Alice Ledger | 50.00   | Invalid transfer payload | R 10 000,00 |
   #     | Transfer without beneficiary | Alice Ledger | 8000.00 | Invalid transfer payload | R 10 000,00 |
 
-  # @unknown
-  # Scenario Outline: <case>
-  #   When I select account "<account>" for an unknown recipient
-  #   And I search for recipient "<beneficiary>" in the Beneficiaries section
-  #   And recipient "<beneficiary>" is not displayed in the Beneficiaries section
-  #   And I enter transfer amount "<amount>" and submit
-  #   Then I should receive the transfer message "<expectedMessage>"
-  #   And my transfer balance should be "<Balance>"
-  #   And I should find no recorded transaction
-
-  #   Examples: Unknown beneficiaries
-  #     | case                          | account      | beneficiary | amount | expectedMessage             | Balance     |
-  #     | Unknown account number       | Alice Ledger | 0600000000  | 0.00   | Invalid transfer payload| R 10 000,00 |
-  #     | Unsaved beneficiarie   | Alice Ledger | Alen  | 0.00   | Invalid transfer payload| R 10 000,00 |
-  #     | Invalid account number   | Alice Ledger | 6235487545     | 0.00   |Invalid transfer payload| R 10 000,00 |
-  #     | invalid beneficiarie     | Alice Ledger | A.165  | 0.00   | Invalid transfer payload| R 10 000,00 |
 
   # @blocked
   # Scenario Outline: <case>

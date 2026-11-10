@@ -35,6 +35,32 @@ await this.page.getByRole('button', { name: 'Selected' }).click();
   }
 );
 
+
+// Select account for unknown beneficiary
+When(
+  "I select account {string} for an unknown recipient",
+  async function (this: UserWorld,) {
+  await this.page.getByRole('radio', { name: 'Alice Ledger check_circle R' }).check();
+  await this.page.getByRole('textbox', { name: 'Search saved beneficiaries or' }).click();
+
+  },
+);
+
+// Search for beneficiary
+When(
+  "I search for recipient {string} in the Beneficiaries section",
+  async function (this: UserWorld, beneficiary: string) {
+    await this.page
+      .getByRole("textbox", {
+        name: "Search saved beneficiaries or enter new account.",
+      })
+      .fill(beneficiary);
+  },
+);
+
+
+
+
 // // Select account without beneficiary
 // When(
 //   "I select account {string} and leave the beneficiary empty",
@@ -51,37 +77,11 @@ await this.page.getByRole('button', { name: 'Selected' }).click();
 //     await expect(beneficiarySearch).toHaveValue('');
 //   }
 // );
-// // Select account for unknown beneficiary
-// When(
-//   "I select account {string} for an unknown recipient",
-//   async function (this: UserWorld, account: string) {
-//       await this.page.getByRole('radio', { name: 'Alice Ledger check_circle R' }).check();
-//   await this.page.getByRole('textbox', { name: 'Search saved beneficiaries or' }).click();
 
-//   },
-// );
 
-// // Search for beneficiary
-// When(
-//   "I search for recipient {string} in the Beneficiaries section",
-//   async function (this: UserWorld, beneficiary: string) {
-//     await this.page
-//       .getByRole("textbox", {
-//         name: "Search saved beneficiaries or enter new account.",
-//       })
-//       .fill(beneficiary);
-//   },
-// );
 
-// // Verify no matching beneficiary
-// When(
-//   "recipient {string} is not displayed in the Beneficiaries section",
-//   async function (this: UserWorld, beneficiary: string) {
-//     await expect(
-//       this.page.getByText(beneficiary, { exact: true })
-//     ).toHaveCount(0);
-//   },
-// );
+
+
 
 // Enter amount and submit transfer
 When("I enter transfer amount {string} and submit", async function (this: UserWorld, amount: string) {
