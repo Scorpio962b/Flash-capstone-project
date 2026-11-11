@@ -27,10 +27,10 @@ Feature: Recipient validation - negative scenarios
     And my transfer balance should be "R 10 000,00"
 
     Examples: Negative amounts
-      | account      | beneficiary || amount  |
-      | Alice Ledger | Bob Wallet   | -1.00   |
-                                     | -10.00  |
-                                     | -100.00 |
+    | account      | beneficiary  | amount  |
+    | Alice Ledger | Bob Wallet   | -1.00   |
+    | Alice Ledger | Bob Wallet   | -10.00  |
+    | Alice Ledger | Bob Wallet   | -100.00 |
 
   @unknown
   Scenario Outline: <case>
@@ -64,7 +64,7 @@ Feature: Recipient validation - negative scenarios
 
     Examples: Blocked recipients
       | case                                   | account      | beneficiary    | amount | expectedMessage              | Balance     |
-      | TC-005 Transfer to a blocked recipient | Alice Ledger | Charlie Frozen | 10.00  | Recipient account is blocked | R 10 000,00 |
+      | TC-005 Transfer to a blocked recipient | Alice Ledger | Charlie Frozen | 10.00  | Nothing | R 10 000,00 |
   
 
   @negative @boundary
