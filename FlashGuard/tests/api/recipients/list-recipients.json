@@ -1,0 +1,13 @@
+{
+  "Request": {
+    "method": "GET",
+    "url": "http://localhost:4000/recipients",
+    "headers": {
+      "Authorization": "Bearer <owner_token>"
+    }
+  },
+  "Response": {
+    "status": 200,
+    "message": "Recipients fetched successfully"
+  }
+}
