@@ -27,10 +27,10 @@ Feature: Recipient validation - negative scenarios
     And my transfer balance should be "R 10 000,00"
 
     Examples: Negative amounts
-    | account      | beneficiary  | amount  |
-    | Alice Ledger | Bob Wallet   | -1.00   |
-    | Alice Ledger | Bob Wallet   | -10.00  |
-    | Alice Ledger | Bob Wallet   | -100.00 |
+      | account      | beneficiary | amount  |
+      | Alice Ledger | Bob Wallet  | -1.00   |
+      | Alice Ledger | Bob Wallet  | -10.00  |
+      | Alice Ledger | Bob Wallet  | -100.00 |
 
   @unknown
   Scenario Outline: <case>
@@ -48,12 +48,12 @@ Feature: Recipient validation - negative scenarios
       | Invalid account number | Alice Ledger | 6235487545  | 0.00   | Invalid transfer payload | R 10 000,00 |
       | invalid beneficiarie   | Alice Ledger | A.165       | 0.00   | Invalid transfer payload | R 10 000,00 |
 
-#  empty classified as defect cause we should leave it empty it will remain selected
+  #  empty classified as defect cause we should leave it empty it will remain selected
   @empty
   Scenario: The app does not allow the beneficiary to be cleared
     When I select account "Alice Ledger" and try to clear the beneficiary
     Then a beneficiary should remain selected
-# This is also a defect cause it doesn't allow to block the account
+  # This is also a defect cause it doesn't allow to block the account
   @blocked
   Scenario Outline: <case>
     When I select account "<account>" and beneficiary "<beneficiary>" for negative transfer
@@ -63,9 +63,9 @@ Feature: Recipient validation - negative scenarios
     And I should find no recorded transaction
 
     Examples: Blocked recipients
-      | case                                   | account      | beneficiary    | amount | expectedMessage              | Balance     |
-      | TC-005 Transfer to a blocked recipient | Alice Ledger | Charlie Frozen | 10.00  | Nothing | R 10 000,00 |
-  
+      | case                                   | account      | beneficiary    | amount | expectedMessage | Balance     |
+      | TC-005 Transfer to a blocked recipient | Alice Ledger | Charlie Frozen | 10.00  | Nothing         | R 10 000,00 |
+
 
   @negative @boundary
   Scenario Outline: <case>
@@ -78,5 +78,3 @@ Feature: Recipient validation - negative scenarios
     Examples: Boundary validation
       | case                 | account      | beneficiary | amount | expectedMessage          | Balance     |
       | Zero amount boundary | Alice Ledger | Bob Wallet  | 0.00   | Invalid transfer payload | R 10 000,00 |
-
-      
