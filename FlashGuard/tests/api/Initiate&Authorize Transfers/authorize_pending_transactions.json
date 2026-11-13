@@ -1,0 +1,32 @@
+[
+
+   {
+    "Request": {
+        "method": "POST",
+        "url": "http://localhost:4000/transactions/transfer/1/authorize "
+    
+    },
+
+    "Response": {
+        "status": 400,
+        
+        "message": "Only pending transactions can be authorized"
+
+    }
+    },
+
+
+{"Request": {
+        "method": "POST",
+        "url": "http://localhost:4000/transactions/transfer/2/authorize "
+    
+    }
+}
+
+
+
+
+
+
+
+]

@@ -1,0 +1,26 @@
+[
+
+   {
+    "Request": {
+        "method": "PUT",
+        "url": "http://localhost:4000/accounts/5",
+        "body": {
+                 "email": "damianmarley@gmail.com",
+                 "fullname": "Damian" 
+                }
+    },
+
+    "Response": {
+        "status": 200,
+        "newUser": {
+                    "id": 5,
+                    "email": "johndoe@gmail.com",
+                    "full_name": "Unnamed",
+                    "balance": 0,
+                    "is_active": true
+                }, 
+                "message-DEFECT": "expected result is for fullname to update to 'Damian' however actual result returned 'Unnamed' in response body"
+    }
+    }
+
+]

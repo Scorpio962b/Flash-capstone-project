@@ -1,0 +1,25 @@
+[
+
+   {
+    "Request": {
+        "method": "POST",
+        "url": "http://localhost:4000/transactions/transfer ",
+        "body": {
+
+                "amount": "",
+                "recipientAccountId": 1,
+                "reference": "Groceries",
+                "senderAccountId": 2
+
+            }
+    },
+
+    "Response": {
+        "status": 400,
+        
+        "message": "Invalid transfer payload"
+
+    }
+    }
+
+]
