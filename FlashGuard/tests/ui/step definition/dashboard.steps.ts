@@ -13,7 +13,7 @@ interface DashboardWorld extends UserWorld {
 
 // The Background sign-in step should be defined once in a shared step file.
 Given(`I am signed in`, async function (this: DashboardWorld) {
-  await this.page.goto(" http://localhost:3000/login");
+  await this.page.goto("http://localhost:3000/login");
   await this.page
     .getByPlaceholder("you@example.com")
     .fill("alice@flashguard.local");

@@ -1,11 +1,8 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
-
 import { UserWorld } from "../../support/World";
 
-// =====================================================
 // GIVEN
-// =====================================================
 
 Given(
   "I am logged in as Alice for negative transfer testing",
