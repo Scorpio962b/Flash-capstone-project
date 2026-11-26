@@ -1,10 +1,10 @@
-
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
 export default defineConfig({
   testDir: './tests/e2e',
-  testIgnore: '**/TC-E2E-003Scenario.spec.ts',
+  // Scenario 3 is a Cucumber/WDIO suite (own Wdio.conf.ts), not a Playwright test
+  testIgnore: ['**/Concurrent  Transfers E2E 3/**'],
   fullyParallel: false,
   forbidOnly: Boolean(
     (globalThis as { process?: { env?: { CI?: string } } }).process?.env?.CI
