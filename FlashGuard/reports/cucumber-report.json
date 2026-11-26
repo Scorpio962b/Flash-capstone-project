@@ -1,0 +1,417 @@
+[
+  {
+    "description": "  As a signed-in FlashGuard user\n  I want to receive notifications and alerts\n  So that I can stay informed about my transactions and account activity",
+    "elements": [
+      {
+        "description": "",
+        "id": "notifications-and-alerts;known-defect---the-notifications-bell-does-not-open-a-panel",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Known defect - the notifications bell does not open a panel",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 640918700
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am signed in with a valid account",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:9"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6240702499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 12,
+            "name": "I am on the account dashboard",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 101138399
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 13,
+            "name": "I click the notifications bell icon",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:22"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 79243399
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 14,
+            "name": "the notifications panel should remain unavailable",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:32"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 14743800
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 15,
+            "name": "no notification entries should be displayed",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:38"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12496999
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 28066599
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@NotificationsFeature",
+            "line": 1
+          },
+          {
+            "name": "@FunctionalNotificationBell",
+            "line": 10
+          },
+          {
+            "name": "@KnownDefect",
+            "line": 10
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "notifications-and-alerts;display-a-notification-after-a-successful-transfer",
+        "keyword": "Scenario",
+        "line": 18,
+        "name": "Display a notification after a successful transfer",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 83711100
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am signed in with a valid account",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:9"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 930721200
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 19,
+            "name": "I have sufficient funds to make a transfer",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:79"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 111966499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 20,
+            "name": "I complete a successful money transfer",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:84"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 249222900
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "a transfer success notification should be displayed",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:91"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 14081199
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 22,
+            "name": "the notification should confirm that the transfer was successful",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:95"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 5673500
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 17134399
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@NotificationsFeature",
+            "line": 1
+          },
+          {
+            "name": "@FunctionalTransferSuccess",
+            "line": 17
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "notifications-and-alerts;known-defect---account-alerts-are-not-displayed-on-the-dashboard",
+        "keyword": "Scenario",
+        "line": 25,
+        "name": "Known defect - account alerts are not displayed on the dashboard",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 79191999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am signed in with a valid account",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:9"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 911846799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 26,
+            "name": "a high-value account alert is available",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:102"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34003600
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 27,
+            "name": "I open the account dashboard",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:123"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 316609000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 28,
+            "name": "the account alert should not be displayed on the dashboard",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:128"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 10479100
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "the account alert details should remain unavailable in the dashboard",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:133"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13607899
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 18727800
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@NotificationsFeature",
+            "line": 1
+          },
+          {
+            "name": "@FunctionalAccountAlert",
+            "line": 24
+          },
+          {
+            "name": "@KnownDefect",
+            "line": 24
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "notifications-and-alerts;display-an-error-message-when-a-transaction-fails",
+        "keyword": "Scenario",
+        "line": 32,
+        "name": "Display an error message when a transaction fails",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 76801899
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "I am signed in with a valid account",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:9"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 934841799
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 33,
+            "name": "I attempt a transaction that fails",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:140"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 234332399
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 34,
+            "name": "an error toast or modal should be displayed",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:147"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11962400
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 35,
+            "name": "the error message should explain why the transaction failed",
+            "match": {
+              "location": "tests\\ui\\step definition\\notifications.steps.ts:151"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6679400
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 12200700
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@NotificationsFeature",
+            "line": 1
+          },
+          {
+            "name": "@NegativeErrorAlert",
+            "line": 31
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "notifications-and-alerts",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "Notifications and Alerts",
+    "tags": [
+      {
+        "name": "@NotificationsFeature",
+        "line": 1
+      }
+    ],
+    "uri": "tests\\ui\\features\\notifications.feature"
+  }
+]

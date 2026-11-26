@@ -50,4 +50,5 @@ VALUES
   (1, 'login', '{"channel":"web"}'),
   (1, 'transfer_initiated', '{"transaction_id":2,"channel":"mobile"}'),
   (1, 'compliance_blocked', '{"transaction_id":3,"rule":"aml"}');
+
 GO
