@@ -1,0 +1,16 @@
+# Start: docker compose -f docker-compose.sonar.yml up -d
+# Open http://localhost:9000 (first login admin / admin)
+services:
+  sonarqube:
+    image: sonarqube:community
+    ports: ["9000:9000"]
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_ext:/opt/sonarqube/extensions
+      - sonar_logs:/opt/sonarqube/logs
+volumes:
+  sonar_data:
+  sonar_ext:
+  sonar_logs:

@@ -49,3 +49,14 @@ mobile-tests/source.txt
 tests/mobile/mkdir specs/
 /ui.xml
 web/dist/
+
+results/
+reports/
+allure-results/
+allure-report/
+playwright-report/
+.features-gen/
+*.backup
+window*.xml
+android-window.xml
+.idea/
