@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import sql from "mssql";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import dotenv from "dotenv";
@@ -13,6 +12,11 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
+const useWindowsAuth = process.env.DB_AUTH?.toLowerCase() === "windows";
+const sql = useWindowsAuth
+  ? (await import("mssql/msnodesqlv8.js")).default
+  : (await import("mssql")).default;
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,25 +25,45 @@ const port = Number(process.env.PORT || 4000);
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
 const SERVICE_MERCHANT_EMAIL = "services@flashguard.local";
 
-const dbHostCandidates = [...new Set([
-  process.env.DB_HOST,
-  process.env.DB_HOST_FALLBACK,
-  "host.docker.internal",
-  "localhost",
-  "sqlserver",
-].filter(Boolean))];
+const dbHostCandidates = useWindowsAuth
+  ? [process.env.DB_HOST || "localhost"]
+  : [...new Set([
+      process.env.DB_HOST,
+      process.env.DB_HOST_FALLBACK,
+      "host.docker.internal",
+      "localhost",
+      "sqlserver",
+    ].filter(Boolean))];
 
 function createDbConfig(server) {
-  return {
-    user: process.env.DB_USER || "sa",
-    password: process.env.DB_PASSWORD || "YourStrong!Passw0rd",
-    database: process.env.DB_NAME || "FlashGuard",
+  const database = process.env.DB_NAME || "FlashGuard";
+  const port = Number(process.env.DB_PORT || 1433);
+
+  if (useWindowsAuth) {
+    const driver = process.env.DB_ODBC_DRIVER || "ODBC Driver 18 for SQL Server";
+    return {
+      connectionString: `Driver={${driver}};Server=${server},${port};Database=${database};Trusted_Connection=Yes;Encrypt=No;TrustServerCertificate=Yes;`,
+    };
+  }
+
+  const config = {
+    database,
     server,
-    port: Number(process.env.DB_PORT || 1433),
+    port,
     options: {
       encrypt: false,
       trustServerCertificate: true,
     },
+  };
+
+  if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
+    throw new Error("DB_USER and DB_PASSWORD are required unless DB_AUTH=windows");
+  }
+
+  return {
+    ...config,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   };
 }
 

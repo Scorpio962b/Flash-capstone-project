@@ -12,5 +12,8 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.1"
+  },
+  "optionalDependencies": {
+    "msnodesqlv8": "^6.2.2"
   }
 }

@@ -26,20 +26,26 @@ node_modules
 mobile/node_modules/
 mobile/dist/
 
-reports/cucumber-report.html
-reports/cucumber-report.json
-reports/cucumber-report.xml
+# Env files (keep the example)
 .env
 .env.*
 !.env.example
+
+# Generated test output
+reports/
+test-results/
+playwright-report/
 
 # Expo local files
 mobile/.expo/
 
 # IDE settings
 tests/.idea/
-mobile/.expo/
+
+# Mobile debug output
 mobile-tests/launch.png
 mobile-tests/ui.xml
 mobile-tests/source.txt
 tests/mobile/mkdir specs/
+/ui.xml
+web/dist/

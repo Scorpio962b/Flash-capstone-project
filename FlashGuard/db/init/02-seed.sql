@@ -4,6 +4,7 @@ GO
 DELETE FROM dbo.ledger_entries;
 DELETE FROM dbo.transactions;
 DELETE FROM dbo.recipients;
+DELETE FROM dbo.payment_methods;
 DELETE FROM dbo.audit_log;
 DELETE FROM dbo.accounts;
 GO

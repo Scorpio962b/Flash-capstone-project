@@ -1,8 +1,12 @@
 {
   "cucumberautocomplete.steps": [
     "FlashGuard/tests/support/**/*.ts",
-    "FlashGuard/tests/ui/step definition/**/*.ts"
+    "FlashGuard/tests/ui/step definition/**/*.ts",
+    "FlashGuard/tests/mobile/step-definitions/**/*.ts",
+    "FlashGuard/tests/e2e/**/*.ts"
   ],
-  "cucumberautocomplete.syncfeatures": "FlashGuard/tests/ui/features/**/*.feature",
-  "cucumberautocomplete.stepRegExSymbol": "`"
+  "cucumberautocomplete.syncfeatures": "FlashGuard/tests/**/features/**/*.feature",
+  "cucumberautocomplete.stepRegExSymbol": "`",
+  "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.smartSnippets": true
 }

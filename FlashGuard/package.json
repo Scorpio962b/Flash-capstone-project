@@ -6,7 +6,8 @@
   "scripts": {
     "stack:up": "npm run stack:up:containers && npm --prefix mobile run start",
     "stack:up:containers": "docker compose up -d --build && node scripts/seed-after-up.mjs",
-    "stack:up:local": "docker compose up -d --build && node scripts/init-local-db.mjs",
+    "stack:up:local": "docker compose stop api && docker compose up -d --build --no-deps web mobile && npm run db:init-local && npm run api:start:windows-auth",
+    "api:start:windows-auth": "node scripts/start-api-windows-auth.mjs",
     "db:init-local": "node scripts/init-local-db.mjs",
     "stack:down": "docker compose down -v",
     "stack:logs": "docker compose logs -f",
@@ -16,11 +17,15 @@
     "test:login:chrome": "cross-env BROWSER=chrome cucumber-js --config cucumber.js tests/ui/features/login.feature",
     "test:mobile": "wdio run ./tests/mobile/wdio.conf.js",
     "test:mobile:cucumber": "wdio run ./tests/mobile/wdio.cucumber.conf.ts",
-    "e2e:typecheck": "tsc -p e2e/tsconfig.json --noEmit"
+    "e2e:typecheck": "tsc -p e2e/tsconfig.json --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.3.0",
-    "@playwright/test": "^1.64.1",
+    "@playwright/test": "^1.65.1",
+    "@types/mssql": "^12.3.0",
     "@types/node": "^26.6.6",
     "@types/react": "~19.1.10",
     "@wdio/appium-service": "^10.1.1",
@@ -36,11 +41,13 @@
     "cross-env": "^10.1.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "webdriverio": "^10.1.0"
   },
   "dependencies": {
     "chromium": "^3.0.3",
     "dotenv": "^18.0.10",
-    "playwright": "^1.64.1"
+    "mssql": "^12.8.1",
+    "playwright": "^1.65.1"
   }
 }

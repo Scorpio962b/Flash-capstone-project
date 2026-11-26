@@ -1127,6 +1127,7 @@ function DashboardScreen({
       >
         {heroCards.map((card) => (
           <Pressable
+            key={card.title}
             accessibilityRole={card.onPress ? "button" : undefined}
             onPress={card.onPress}
             style={[
@@ -1439,6 +1440,7 @@ function TransferScreen({
           <View style={styles.amountFieldWrap}>
             <Text style={styles.amountPrefix}>R</Text>
             <TextInput
+              testID="transfer-amount"
               value={sendForm.amount}
               onChangeText={(value) =>
                 setSendForm((current) => ({ ...current, amount: value }))
@@ -1498,7 +1500,12 @@ function TransferScreen({
         </View>
       </View>
 
-      <Pressable style={styles.primaryButton} onPress={onSubmit} disabled={loading}>
+      <Pressable
+        testID="transfer-submit"
+        style={styles.primaryButton}
+        onPress={onSubmit}
+        disabled={loading}
+      >
         <Text style={styles.primaryButtonText}>
           {loading ? "Submitting..." : "Review Transaction"}
         </Text>
