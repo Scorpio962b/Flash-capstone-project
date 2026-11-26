@@ -1,0 +1,14 @@
+{
+  "Request": {
+    "method": "POST",
+    "url": "/api/transactions/cancel-transfer/2/cancel ",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEsImlhdCI6MTc5NDIxOTYzMiwiZXhwIjoxNzk0MzA2MDMyfQ.Yfo-cGzrOE_2AkH9HjItUeo3VSs2cBtY_HmhWNZq9fk"
+
+    },
+    "body": {
+    },
+  "StatusCode": 400,
+  "Response": {
+    "message": "Pending transaction not found"
+  }
+}

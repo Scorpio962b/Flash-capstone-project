@@ -1,0 +1,19 @@
+{
+  "Request": {
+    "method": "POST",
+    "url": "http://localhost:4000/transactions/transfer/1/authorize",
+    "headers": {
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEsImlhdCI6MTc5NDIxOTYzMiwiZXhwIjoxNzk0MzA2MDMyfQ.Yfo-cGzrOE_2AkH9HjItUeo3VSs2cBtY_HmhWNZq9fk"
+    
+    },
+    "body": {}
+  },
+  "StatusCode": 400,
+  "Response": {
+    "id": 1,
+    "sender_account_id": 1,
+    "recipient_account_id": 2,
+    "amount": 100,
+    "message": "Only pending transactions can be authorized"
+  }
+}

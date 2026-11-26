@@ -1,0 +1,22 @@
+[
+
+   {
+    "Request": {
+        "method": "GET",
+        "url": "http://localhost:4000/accounts/2/balance",
+        "body": {
+                 "email": "bob@flashguard.local",
+                 "password": "offline-demo" 
+                }
+    },
+
+    "Response": {
+        "status": 200,
+        "newUser": {
+                   "id": 2,
+                   "balance": 2500
+                }   
+    }
+    }
+
+]

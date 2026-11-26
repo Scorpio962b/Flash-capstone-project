@@ -1,0 +1,26 @@
+{
+  "testId": "T-API-ALT-001",
+  "name": "Get fraud/security alerts",
+  "method": "GET",
+  "url": "http://localhost:4000/alerts",
+  "response": {
+    "status": 200,
+    "body": [
+      { "id": 313, "amount": 10000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-16T08:56:16.347Z" },
+      { "id": 300, "amount": 10000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-16T08:22:41.082Z" },
+      { "id": 290, "amount": 10000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-13T13:11:55.968Z" },
+      { "id": 279, "amount": 10000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-13T12:57:49.591Z" },
+      { "id": 270, "amount": 10000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-13T12:54:01.174Z" },
+      { "id": 262, "amount": 10000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-13T12:48:33.005Z" },
+      { "id": 245, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-11T10:25:34.697Z" },
+      { "id": 237, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-11T10:13:06.724Z" },
+      { "id": 151, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-09T05:41:43.871Z" },
+      { "id": 148, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-09T05:39:51.752Z" },
+      { "id": 145, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-09T05:35:51.338Z" },
+      { "id": 25, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-06T09:53:05.607Z" },
+      { "id": 21, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-05T13:45:45.230Z" },
+      { "id": 15, "amount": 8000, "compliance_flag": null, "status": "pending", "created_at": "2026-11-05T13:32:20.541Z" },
+      { "id": 3, "amount": 15000, "compliance_flag": "aml", "status": "rejected", "created_at": "2026-10-20T09:41:28.503Z" }
+    ]
+  }
+}

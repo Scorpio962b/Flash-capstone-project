@@ -1,0 +1,20 @@
+[
+
+   {
+    "Request, sent the same request 50 times": {
+        "method": "POST",
+        "url": "http://localhost:4000/auth/login",
+        "body": {
+            "email": "polite@dlamini.local",
+            "password": "offline-demo"
+                }
+    },
+
+    "Response for every request": {
+        "status": "200 - OK",
+        "success": true,
+        "Findings": "DEFECT: Rate limiting was not triggered, all 50 requests returned 200 OK with authentication tokens."
+        }
+    }
+]
+

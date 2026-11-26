@@ -1,0 +1,12 @@
+{
+  "testId": "T-API-ACC-002",
+  "name": "Get account that does not exist",
+  "method": "GET",
+  "url": "http://localhost:4000/accounts/6",
+  "response": {
+    "status": 404,
+    "body": {
+      "message": "Account not found"
+    }
+  }
+}

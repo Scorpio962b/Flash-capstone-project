@@ -1,0 +1,18 @@
+[
+
+   {
+    "Request": {
+        "method": "POST",
+        "url": "http://localhost:4000/auth/register",
+        "body": {
+                  "email": "polite@dlamini.local",
+                  "fullName": "Polite Dlamini"
+                }
+    },
+
+    "Response": {
+        "status": 409,
+        "message": "Email already exists"      
+    }
+    }
+]

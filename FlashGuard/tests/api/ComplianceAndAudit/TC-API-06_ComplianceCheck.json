@@ -1,0 +1,17 @@
+{
+  "testId": "T-API-CMP-001",
+  "name": "List compliance checks",
+  "method": "GET",
+  "url": "http://localhost:4000/compliance-checks",
+  "response": {
+    "status": 200,
+    "body": [
+      {
+        "id": 3,
+        "compliance_flag": "aml",
+        "status": "rejected",
+        "created_at": "2026-10-20T09:41:28.503Z"
+      }
+    ]
+  }
+}
