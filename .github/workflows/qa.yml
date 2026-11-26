@@ -1,0 +1,173 @@
+# CI quality gates for FlashGuard. Runs on every pull request and on pushes to main.
+# Make it block merges: GitHub > Settings > Branches > Add rule for main >
+#   "Require status checks to pass" > tick: Lint (ESLint), SonarQube quality gate, UI + E2E + API + ZAP
+name: QA
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  API_DIR: tests/api            # every .json under here is run as a Postman collection
+
+jobs:
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: ESLint (fails on any error)
+        run: npx eslint tests src
+
+  sonar:
+    name: SonarQube quality gate
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    steps:
+      - name: Check Sonar secrets
+        run: |
+          if [ -z "$SONAR_TOKEN" ] || [ -z "$SONAR_HOST_URL" ]; then
+            echo "::error::Add SONAR_TOKEN and SONAR_HOST_URL in GitHub > Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: ESLint report for Sonar
+        run: mkdir -p reports && (npx eslint tests src --format json --output-file reports/eslint.json || true)
+      - name: Sonar scan (fails if the quality gate fails)
+        uses: SonarSource/sonarqube-scan-action@v5
+
+  e2e:
+    name: UI + E2E + API + ZAP
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+
+      - name: Start stack
+        run: docker compose up -d --build
+      - name: Wait for API and web app
+        run: |
+          for url in http://localhost:4000/health http://localhost:3000; do
+            for i in $(seq 1 60); do curl -fsS "$url" > /dev/null && break; sleep 3; done
+            curl -fsS "$url" > /dev/null || { echo "::error::$url did not come up"; docker compose logs; exit 1; }
+          done
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: UI tests (cucumber-js, tests/ui)
+        run: |
+          mkdir -p results/ui
+          npx cucumber-js --format junit:results/ui/junit.xml --format html:results/ui/cucumber-report.html
+
+      - name: E2E tests (Playwright, tests/e2e)
+        if: ${{ !cancelled() }}
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_NAME: results/e2e/junit.xml
+        run: npx playwright test --reporter=list,html,junit,allure-playwright
+
+      - name: API tests (Newman, every collection in tests/api)
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p results/api
+          failed=0
+          while IFS= read -r -d '' f; do
+            name=$(basename "$f" .json)
+            echo "--- $name"
+            npx newman run "$f" -r cli,junit --reporter-junit-export "results/api/$name.xml" || failed=$((failed+1))
+          done < <(find "$API_DIR" -name '*.json' ! -name '*environment*' -print0)
+          echo "API: $failed collections failed"
+          [ "$failed" -eq 0 ]
+
+      - name: OWASP ZAP baseline scan
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p results/zap && chmod 777 results/zap
+          docker run --rm --network host -v "$PWD/results/zap:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py -t http://localhost:3000 -r zap-report.html -J zap-report.json -I
+
+      - name: Metrics (pass rate, flakiness, times)
+        if: ${{ !cancelled() }}
+        run: |
+          node scripts/qa-metrics.mjs || true
+          cat results/metrics/metrics.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload Playwright HTML report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+      - name: Upload test results (JUnit, ZAP, metrics)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: results/
+          if-no-files-found: ignore
+      - name: Upload Allure results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
+          if-no-files-found: ignore
+      - name: Stop stack
+        if: always()
+        run: docker compose down -v
+
+  allure:
+    name: Allure report
+    needs: e2e
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+        continue-on-error: true
+      - name: Generate Allure report
+        run: |
+          if [ -d allure-results ] && [ "$(ls -A allure-results)" ]; then
+            npx allure-commandline generate allure-results -o allure-report --clean
+          else
+            echo "::warning::No Allure results to report"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          if-no-files-found: ignore

@@ -1,0 +1,2 @@
+Defect ID,Title,Requirement,Test ID,Layer,Severity,Priority,Status,Found by,Date found,Steps to reproduce,Expected,Actual,Root cause,Root cause category,Fix / workaround,Date closed,Evidence
+DEF-001,Example: balance does not refresh after pull-to-refresh,FR-004,TC-012,mobile,Major,P1,Open,Name,2026-11-26,"1. Log in 2. Pull down on dashboard","Balance updates","Old balance stays","Refresh handler not awaited","Test script / App code / Environment / Data / Requirement","",,"results/mobile/junit-0-0.xml"

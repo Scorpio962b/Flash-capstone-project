@@ -1,0 +1,77 @@
+Test ID,Title,Layer,Requirements (e.g. FR-001;FR-004),Priority (P0-P3)
+TC-01,"block_list_enforced",db,FR-003;FR-006,P0
+TC-02,"sender_not_recipient",db,FR-003,P0
+TC-03,"no_double_spending_A",db,FR-003;FR-005,P1
+TC-04,"no_dirty_reads_A",db,FR-005,P1
+TC-API-01,"getAllAccounts",api,FR-002;FR-004,P0
+TC-API-02,"getUnregisteredUser",api,FR-002;FR-004,P0
+TC-API-03,"getOneAccount",api,FR-002;FR-004,P0
+TC-API-04,"getBalance",api,FR-002;FR-004,P0
+TC-API-05,"comlianceValidation",api,FR-006;FR-004,P0
+TC-API-06,"ComplianceCheck",api,FR-006;FR-004,P0
+TC-API-07,"getAuditLogs",api,FR-005;FR-006;FR-004,P0
+TC-API-08,"getAlerts",api,FR-006;FR-004,P0
+TC-API-09,"valid_transfer",api,FR-003;FR-004,P0
+TC-API-10,"invalid_transfer",api,FR-003;FR-004,P0
+TC-API-11,"boundary_transfer",api,FR-003;FR-004,P0
+TC-API-12,"authorize_pending_transactions",api,FR-003;FR-004,P0
+TC-API-13,"update_account-profile",api,FR-002;FR-004,P0
+TC-API-14,"successful_account_retrieval",api,FR-002;FR-004,P0
+TC-API-15,"retrieval_of_real-time_balance",api,FR-002;FR-004,P0
+TC-API-16,"retrieval_of_all_accounts",api,FR-002;FR-004,P0
+TC-API-17,"loginInvalidAuth",api,FR-001;FR-004,P0
+TC-API-18,"loginValidAuth",api,FR-001;FR-004,P0
+TC-API-19,"logout",api,FR-001;FR-004,P0
+TC-API-20,"missingParameters",api,FR-004,P1
+TC-API-21,"registerExistingEmail",api,FR-001;FR-004,P0
+TC-API-22,"registerNewUser",api,FR-001;FR-004,P0
+TC-API-23,"registrationValidation",api,FR-001;FR-004,P0
+TC-API-24,"ErrorHandling",api,FR-004,P1
+TC-API-25,"InvalidJwtOrExpiredToken",api,FR-001;FR-004,P1
+TC-API-26,"RateLimiting(429)TooManyRequests",api,FR-004,P1
+TC-API-27,"add-recipient",api,FR-003;FR-004,P0
+TC-API-28,"list-recipients",api,FR-003;FR-004,P0
+TC-API-29,"update-recipient",api,FR-003;FR-004,P0
+TC-API-30,"Valid.Blocked",api,FR-003;FR-006;FR-004,P0
+TC-API-31,"Auth.Transac",api,FR-003;FR-004,P0
+TC-API-32,"Boundary.Transfer",api,FR-003;FR-004,P0
+TC-API-33,"cancel-transfer",api,FR-003;FR-004,P0
+TC-API-34,"get-transaction",api,FR-003;FR-004,P0
+TC-API-35,"Missing.Amount",api,FR-003;FR-004,P1
+TC-API-36,"Pending.Transfer",api,FR-003;FR-004,P0
+TC-API-37,"transaction-history",api,FR-003;FR-004,P0
+TC-API-38,"Valid.Tranfer",api,FR-003;FR-004,P0
+TC-DB-05,"amount_matches_ledger",db,FR-003;FR-005,P0
+TC-DB-06,"failed_txn_no_balance_effect",db,FR-003;FR-005,P0
+TC-DB-07,"recipient_credited_two_sided",db,FR-003;FR-005,P0
+TC-DB-08,"chronological_timestamps",db,FR-005,P0
+TC-DB-09,"status_progression",db,FR-003;FR-005,P0
+TC-DB-10,"AccountBalanceMatchesLedger",db,FR-002;FR-005,P0
+TC-DB-11,"NoDuplicateAccountEmails",db,FR-005,P0
+TC-DB-12,"SoftDeletePreservesAccountAsInactive",db,FR-005,P0
+TC-DB-13,"FailedTransactionsDoNotChangeBalances",db,FR-003;FR-005,P0
+TC-DB-14,"RecipientReceivesTheCorrespondingCredit",db,FR-003;FR-005,P0
+TC-DB-15,"TransactionAmountAgreesWithLedgerEntries",db,FR-003;FR-005,P0
+TC-DB-16,"TransactionStatusProgressionIsValid",db,FR-003;FR-005,P0
+TC-DB-17,"TransactionTimestampsAreChronological",db,FR-005,P0
+TC-E2E-001,"scenario1",e2e,FR-001;FR-002;FR-003;FR-005;FR-007,P0
+TC-E2E-002,"column",e2e,FR-003;FR-005;FR-006,P0
+TC-E2E-003,"Scenario",e2e,FR-003;FR-005,P1
+TC-MOB-001,"Mobile Dashboard",mobile,FR-002;FR-007,P0
+TC-MOB-002,"Flash-Guard Mobile Notifications and Permissions",mobile,FR-007,P1
+TC-MOB-003,"Flash-Guard Mobile Gestures",mobile,FR-007,P1
+TC-MOB-004,"Balance and history",mobile,FR-002;FR-007,P0
+TC-MOB-005,"Balance and history",mobile,FR-002;FR-007,P0
+TC-MOB-006,"Flash-Guard Merchant Mobile Settings",mobile,FR-007,P1
+TC-MOB-007,"Flash-Guard Merchant Mobile Settings",mobile,FR-007,P1
+TC-MOB-008,"Mobile Settings and Responsiveness",mobile,FR-007,P1
+TC-MOB-009,"Mobile Settings and Responsiveness",mobile,FR-007,P1
+TC-MOB-010,"Flash-Guard Mobile Fund Transfers",mobile,FR-003;FR-007,P0
+TC-MOB-011,"Flash-Guard Merchant Authentication",mobile,FR-001;FR-007,P0
+TC-MOB-012,"Flash-Guard Camera Face-Check Authentication",mobile,FR-001;FR-007,P0
+TC-UI-001,"Account Management",ui,FR-002,P1
+TC-UI-002,"Initiate money transfer requests",ui,FR-003,P0
+TC-UI-003,"Login",ui,FR-001,P0
+TC-UI-004,"User dashboard and account information",ui,FR-002,P0
+TC-UI-005,"Notifications and Alerts",ui,FR-006,P1
+TC-UI-006,"Transfer funds",ui,FR-003,P0
