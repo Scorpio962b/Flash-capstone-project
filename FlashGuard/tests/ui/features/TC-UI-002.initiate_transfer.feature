@@ -1,0 +1,28 @@
+@InitiateTransferFeature
+Feature: Initiate money transfer requests
+  As a FlashGuard user
+  I want to initiate a money transfer to a beneficiary
+  So that the transfer request is accepted but only completed after OTP authentication
+
+  Background:
+    Given I navigate to the transfer funds feature
+
+  Scenario Outline: <case>
+    When I select "<Account>" from Accounts tab
+    And I select "<Beneficiary>" from Beneficiaries
+    And I select "<Amount>" ZAR that I want to transfer and click submit
+    Then I see the "<expectedMessage>" result for my transfer request
+    And my account balance remains unchanged
+
+
+    @smoke
+    Examples: Accepted
+      | case                               | Account      | Beneficiary  | Amount | expectedMessage               | Status  |
+      | TC-001 A successful money transfer | Alice Ledger | Bob Wallet   | 200    | Transfer created successfully | PENDING |
+      | TC-002 A successful money transfer | Bob Wallet   | Alice Ledger | 200    | Transfer created successfully | PENDING |
+
+    @negative
+    Examples: Boundary/Rejected
+      | case                                        | Account      | Beneficiary  | Amount | expectedMessage               | Status  |
+      | TC-003 - Transfer the minimum amount, R0.01 | Alice Ledger | Bob Wallet   | 0.01   | Transfer created successfully | PENDING |
+      | TC-004 - Transfer no amount, R0.00          | Bob Wallet   | Alice Ledger | 0      | Invalid transfer payload      | PENDING |
