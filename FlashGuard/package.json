@@ -13,14 +13,30 @@
     "db:reset-seed": "docker compose --profile seed run --rm app-seed",
     "api:health": "curl http://localhost:4000/health",
     "test:ui": "cucumber-js --config cucumber.js",
-    "test:login:chrome": "cross-env BROWSER=chrome cucumber-js --config cucumber.js tests/ui/features/login.feature"
+    "test:login:chrome": "cross-env BROWSER=chrome cucumber-js --config cucumber.js tests/ui/features/login.feature",
+    "test:mobile": "wdio run ./tests/mobile/wdio.conf.js",
+    "test:mobile:cucumber": "wdio run ./tests/mobile/wdio.cucumber.conf.ts",
+    "e2e:typecheck": "tsc -p e2e/tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.3.0",
     "@playwright/test": "^1.64.1",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "~19.1.10",
+    "@wdio/appium-service": "^10.1.1",
+    "@wdio/cli": "^10.1.0",
+    "@wdio/cucumber-framework": "^10.1.0",
+    "@wdio/globals": "^10.1.0",
+    "@wdio/local-runner": "^10.1.0",
+    "@wdio/mocha-framework": "^10.1.0",
+    "@wdio/spec-reporter": "^10.1.0",
+    "appium": "^3.9.0",
+    "appium-inspector-plugin": "^2026.11.6",
+    "appium-uiautomator2-driver": "^8.6.0",
     "cross-env": "^10.1.0",
-    "tsx": "^4.23.15"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "chromium": "^3.0.3",

@@ -367,6 +367,7 @@ function App() {
   const [biometricOpen, setBiometricOpen] = useState(false);
   const [biometricCameraReady, setBiometricCameraReady] = useState(false);
   const [biometricStatus, setBiometricStatus] = useState("Look at the camera and smile.");
+  const [cameraPermissionAlertPending, setCameraPermissionAlertPending] = useState(false);
 
   const cameraRef = React.useRef(null);
 
@@ -430,6 +431,13 @@ function App() {
     return () => clearTimeout(timer);
   }, [biometricOpen, cameraPermission?.granted, loading, biometricCameraReady]);
 
+  useEffect(() => {
+    if (biometricOpen || !cameraPermissionAlertPending) return;
+
+    setCameraPermissionAlertPending(false);
+    Alert.alert("Camera access required", "Enable the camera to use face check sign in.");
+  }, [biometricOpen, cameraPermissionAlertPending]);
+
   const handleLogin = async (override = {}) => {
     const email = override.email || authForm.email;
     const password = override.password || authForm.password;
@@ -465,8 +473,9 @@ function App() {
 
     const permission = await requestCameraPermission();
     if (!permission.granted) {
-      Alert.alert("Camera access required", "Enable the camera to use face check sign in.");
       setBiometricOpen(false);
+      setBiometricCameraReady(false);
+      setCameraPermissionAlertPending(true);
     }
   };
 

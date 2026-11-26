@@ -32,3 +32,14 @@ reports/cucumber-report.xml
 .env
 .env.*
 !.env.example
+
+# Expo local files
+mobile/.expo/
+
+# IDE settings
+tests/.idea/
+mobile/.expo/
+mobile-tests/launch.png
+mobile-tests/ui.xml
+mobile-tests/source.txt
+tests/mobile/mkdir specs/

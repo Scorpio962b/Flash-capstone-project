@@ -3,7 +3,8 @@ import { expect } from "@playwright/test";
 
 import { UserWorld } from "../../support/World";
 
-// =====================================================
+const transactionCounts = new WeakMap<object, number>();
+
 // GIVEN
 
 Given(
@@ -17,10 +18,10 @@ Given(
 );
 
 // WHEN
+
 When(
   "I select {string} from Accounts tab and select {string} from Beneficiaries",
   async function (this: UserWorld, account: string, beneficiary: string) {
-    // Record the transaction count before attempting the transfer.
     await this.page.getByRole("link", { name: /Transaction/ }).click();
     await expect(
       this.page.getByRole("heading", { name: "Ledger & Reporting" }),
@@ -29,6 +30,7 @@ When(
     const existingTransactions = await this.page
       .getByRole("button", { name: "View Details" })
       .count();
+
     transactionCounts.set(this.page, existingTransactions);
 
     await this.page.getByRole("link", { name: /Transfer Funds/ }).click();
@@ -41,6 +43,7 @@ When(
     const search = this.page.getByPlaceholder(
       "Search saved beneficiaries or enter new account...",
     );
+
     await search.fill(beneficiary);
 
     if (beneficiary.trim() !== "") {
@@ -134,6 +137,7 @@ When(
 );
 
 // THEN
+
 Then("a beneficiary should remain selected", async function (this: UserWorld) {
   await expect(
     this.page.getByRole("button", { name: /^Selected$/ }),
@@ -198,6 +202,7 @@ Then(
 
 Then("no transaction should be recorded", async function (this: UserWorld) {
   await this.page.getByRole("link", { name: /Transaction/ }).click();
+
   await expect(
     this.page.getByRole("heading", { name: "Ledger & Reporting" }),
   ).toBeVisible();
@@ -219,6 +224,7 @@ Then("no transaction should be recorded", async function (this: UserWorld) {
 });
 
 // NEGATIVE AMOUNT VALIDATION
+
 Then(
   "I should see the negative amount validation message",
   async function (this: UserWorld) {
