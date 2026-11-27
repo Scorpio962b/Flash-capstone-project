@@ -1,7 +1,7 @@
-declare const browser: any;
+﻿declare const browser: any;
 
-const { Given, When, Then } = require("@cucumber/cucumber");
-const h = require("../support/helpers");
+import { Given, When, Then } from "@cucumber/cucumber";
+import * as h from "../support/helpers";
 // ---------- Update profile ----------
 Given(/^the merchant is logged in and on the Account screen$/, async () => {
   await h.ensureLoggedIn();

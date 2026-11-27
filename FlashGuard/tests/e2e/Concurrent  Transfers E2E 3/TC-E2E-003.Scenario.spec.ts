@@ -76,7 +76,9 @@ async function initializeState(): Promise<ConcurrencyState> {
 
   s.recipientId = recipient.id;
   s.originalBalance = round2(await getBalance(s.web));
-  s.originalIds = new Set((await getHistory(s.web)).map((transaction) => transaction.id));
+  s.originalIds = new Set(
+    (await getHistory(s.web)).map((transaction) => transaction.id),
+  );
 
   state = s;
   return s;
@@ -120,19 +122,16 @@ When(
 
     const button = await transferPage.reviewButton();
     const delayMs = Number(process.env.WEB_DELAY_MS ?? 0);
-    const fireAt = Date.now();
 
     const [, web] = await Promise.all([
       transferPage.tap(button),
-      sleep(delayMs).then(() => transfer(s.web, s.recipientId as number, webAmount)),
+      sleep(delayMs).then(() =>
+        transfer(s.web, s.recipientId as number, webAmount),
+      ),
     ]);
 
     s.webResult = web;
     s.mobileResult = await transferPage.waitForTransferResult();
-
-    console.log(
-      `[Concurrency] web call started +${web.startedAt - fireAt}ms after the tap command, took ${web.finishedAt - web.startedAt}ms`,
-    );
   },
 );
 
@@ -177,7 +176,9 @@ Then('both transfers should succeed', async () => {
   }
 
   if (!s.mobileResult?.ok) {
-    throw new Error(`Mobile transfer failed: ${s.mobileResult?.message || '(no message)'}`);
+    throw new Error(
+      `Mobile transfer failed: ${s.mobileResult?.message || '(no message)'}`,
+    );
   }
 });
 
@@ -200,7 +201,10 @@ Then('both transactions should be saved in the database', async () => {
     .sort((a, b) => a - b);
 
   expect(amounts).toEqual(
-    [round2(s.mobileAmount as number), round2(s.webAmount as number)].sort((a, b) => a - b),
+    [
+      round2(s.mobileAmount as number),
+      round2(s.webAmount as number),
+    ].sort((a, b) => a - b),
   );
 });
 
@@ -239,9 +243,13 @@ Then('no duplicate transactions should exist', async () => {
   await sleep(3000);
 
   const history = await getHistory(s.web);
-  const fresh = history.filter((transaction) => !(s.originalIds as Set<number>).has(transaction.id));
+  const fresh = history.filter(
+    (transaction) => !(s.originalIds as Set<number>).has(transaction.id),
+  );
 
-  expect(new Set(fresh.map((transaction) => transaction.id)).size).toBe(fresh.length);
+  expect(new Set(fresh.map((transaction) => transaction.id)).size).toBe(
+    fresh.length,
+  );
   expect(fresh).toHaveLength(2);
 });
 
@@ -249,7 +257,9 @@ Then('the mobile transfer should be submitted successfully', async () => {
   const result = st().mobileResult;
 
   if (!result?.ok) {
-    throw new Error(`Mobile transfer failed: ${result?.message || '(no success alert appeared)'}`);
+    throw new Error(
+      `Mobile transfer failed: ${result?.message || '(no success alert appeared)'}`,
+    );
   }
 });
 
@@ -257,7 +267,9 @@ Then('the transfer should be completed from Alice to {string}', async (recipient
   const s = st();
 
   if (s.recipientName !== recipientName) {
-    throw new Error(`Expected recipient "${recipientName}", but selected "${s.recipientName}"`);
+    throw new Error(
+      `Expected recipient "${recipientName}", but selected "${s.recipientName}"`,
+    );
   }
 
   const fresh = await waitForNewTransactions(s, 1);
@@ -295,26 +307,37 @@ Then(
     const s = st();
 
     if (s.recipientName !== recipientName) {
-      throw new Error(`Expected recipient "${recipientName}", but selected "${s.recipientName}"`);
+      throw new Error(
+        `Expected recipient "${recipientName}", but selected "${s.recipientName}"`,
+      );
     }
 
     expect(round2(debit)).toBe(round2(s.mobileAmount as number));
     expect(round2(credit)).toBe(round2(s.mobileAmount as number));
 
-    const expectedAliceBalance = round2((s.originalBalance as number) - debit);
-    const expectedRecipientBalance = round2((s.recipientBalance as number) + credit);
+    const expectedAliceBalance = round2(
+      (s.originalBalance as number) - debit,
+    );
+    const expectedRecipientBalance = round2(
+      (s.recipientBalance as number) + credit,
+    );
     const deadline = Date.now() + 10000;
 
     let aliceBalance = round2(await getBalance(s.web));
-    let recipientBalance = round2(await getBalance(s.web, s.recipientId as number));
+    let recipientBalance = round2(
+      await getBalance(s.web, s.recipientId as number),
+    );
 
     while (
-      (aliceBalance !== expectedAliceBalance || recipientBalance !== expectedRecipientBalance) &&
+      (aliceBalance !== expectedAliceBalance ||
+        recipientBalance !== expectedRecipientBalance) &&
       Date.now() < deadline
     ) {
       await sleep(500);
       aliceBalance = round2(await getBalance(s.web));
-      recipientBalance = round2(await getBalance(s.web, s.recipientId as number));
+      recipientBalance = round2(
+        await getBalance(s.web, s.recipientId as number),
+      );
     }
 
     expect(aliceBalance).toBe(expectedAliceBalance);

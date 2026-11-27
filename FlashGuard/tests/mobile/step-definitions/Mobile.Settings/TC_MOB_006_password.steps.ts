@@ -1,4 +1,4 @@
-const { Given, When, Then } = require("@cucumber/cucumber");
+import { Given, When, Then } from "@cucumber/cucumber";
 const h = require("../support/helpers");
 
 const NEW_PASSWORD = "NewPass123!";
@@ -32,5 +32,3 @@ Then(/^the merchant should be able to log in with the new password$/, async () =
   await h.login(h.EMAIL, h.ctx.newPassword);
   await h.waitShown(h.DASHBOARD.netWorth(), "Dashboard");
 });
-
-

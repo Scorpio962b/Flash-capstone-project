@@ -1,3 +1,4 @@
+
 /** Shared helpers: ZAR parsing, backend "oracle" and per-scenario context. */
 
 const API_URL = process.env.API_URL ?? 'http://localhost:4000'; // test runner runs on the host, not the emulator
@@ -18,7 +19,10 @@ export interface BackendState {
   history: BackendTransaction[];
 }
 
-async function call<T>(path: string, opts: { token?: string; body?: unknown } = {}): Promise<T> {
+async function call<T>(
+  path: string,
+  opts: { token?: string; body?: unknown } = {},
+): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     method: opts.body ? 'POST' : 'GET',
     headers: {
@@ -28,7 +32,7 @@ async function call<T>(path: string, opts: { token?: string; body?: unknown } = 
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
 
-  const json: any = await res.json();
+  const json = (await res.json()) as { message?: string };
 
   if (!res.ok) {
     throw new Error(`${path} -> ${res.status}: ${json?.message ?? 'request failed'}`);
@@ -39,7 +43,10 @@ async function call<T>(path: string, opts: { token?: string; body?: unknown } = 
 
 /** Logs in through the API and returns what the app should be showing. */
 export async function getBackendState(): Promise<BackendState> {
-  const login = await call<{ token: string; user: { id: number; full_name: string } }>('/auth/login', {
+  const login = await call<{
+    token: string;
+    user: { id: number; full_name: string };
+  }>('/auth/login', {
     body: {
       email: EMAIL,
       password: PASSWORD,
@@ -48,8 +55,12 @@ export async function getBackendState(): Promise<BackendState> {
   });
 
   const [bal, history] = await Promise.all([
-    call<{ balance: number }>(`/accounts/${login.user.id}/balance`, { token: login.token }),
-    call<BackendTransaction[]>('/transactions/history', { token: login.token }),
+    call<{ balance: number }>(`/accounts/${login.user.id}/balance`, {
+      token: login.token,
+    }),
+    call<BackendTransaction[]>('/transactions/history', {
+      token: login.token,
+    }),
   ]);
 
   return {
@@ -65,7 +76,7 @@ export async function getBackendState(): Promise<BackendState> {
  * The app uses Intl en-ZA, so separators/NBSP vary by device: be tolerant.
  */
 export function parseZar(raw: string): number {
-  const negative = raw.includes('-') || raw.includes('\u2212');
+  const negative = raw.includes('-') || raw.includes('−');
   const cleaned = raw.replace(/[^\d,.]/g, '');
   const m = cleaned.match(/^(.*)[.,](\d{2})$/);
   const value = m

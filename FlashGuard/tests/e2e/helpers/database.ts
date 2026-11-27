@@ -1,5 +1,14 @@
+
 declare const require: (moduleName: string) => {
-  execFileSync: (...args: any[]) => string;
+  execFileSync: (
+    file: string,
+    args: string[],
+    options: {
+      encoding: string;
+      env: Record<string, string | undefined>;
+      stdio: ['ignore', 'pipe', 'pipe'];
+    },
+  ) => string;
 };
 
 declare const process: {
@@ -23,7 +32,7 @@ export function executeSql(query: string): string {
 
     if (!password) {
       throw new Error(
-        'Set DB_AUTH=windows or provide DB_PASSWORD to query SQL Server in E2E tests.'
+        'Set DB_AUTH=windows or provide DB_PASSWORD to query SQL Server in E2E tests.',
       );
     }
 
@@ -31,13 +40,17 @@ export function executeSql(query: string): string {
   }
 
   args.push(
-    '-d', process.env.DB_NAME || 'FlashGuard',
+    '-d',
+    process.env.DB_NAME || 'FlashGuard',
     '-C',
     '-b',
-    '-h', '-1',
+    '-h',
+    '-1',
     '-W',
-    '-s', '|',
-    '-Q', query
+    '-s',
+    '|',
+    '-Q',
+    query,
   );
 
   try {
@@ -54,10 +67,7 @@ export function executeSql(query: string): string {
         ? String(error.stderr || '')
         : '';
 
-    throw new Error(
-      `SQL Server query failed: ${stderr || message}`,
-      { cause: error }
-    );
+    throw new Error(`SQL Server query failed: ${stderr || message}`);
   }
 }
 
