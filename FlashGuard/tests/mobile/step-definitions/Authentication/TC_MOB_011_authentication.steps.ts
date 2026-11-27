@@ -1,3 +1,5 @@
+﻿import logger from '@wdio/logger';
+const log = logger('TC_MOB_011');
 import { Given, When, Then } from '@cucumber/cucumber';
 
 // Login screen elements
@@ -55,11 +57,11 @@ const enterPassword = async (password: string) => {
 // MOB-002: Login screen
 
 Given('the merchant is on the login screen', async () => {
-  console.log('\n========== MOB-002 LOGIN SCREEN ==========');
+  log.info('\n========== MOB-002 LOGIN SCREEN ==========');
 
   await verifyLoginScreen();
 
-  console.log('Login screen successfully displayed.');
+  log.info('Login screen successfully displayed.');
 });
 
 // MOB-002: Email entry
@@ -93,7 +95,7 @@ When('the merchant submits the login form', async () => {
   await button.waitForDisplayed({ timeout: 15000 });
   await button.click();
 
-  console.log('Login form submitted.');
+  log.info('Login form submitted.');
 });
 
 // MOB-002: Successful authentication
@@ -106,7 +108,7 @@ Then('the merchant should successfully access the dashboard', async () => {
     timeoutMsg: 'Login submitted, but the expected dashboard was not displayed.'
   });
 
-  console.log('Merchant successfully accessed the dashboard.');
+  log.info('Merchant successfully accessed the dashboard.');
 });
 
 Then('the dashboard should display the name {string}', async (expectedName: string) => {
@@ -132,13 +134,13 @@ Then('the merchant dismisses the welcome message', async () => {
 
   await okButton.click();
 
-  console.log('Welcome alert dismissed.');
+  log.info('Welcome alert dismissed.');
 });
 
 // MOB-002: Unsuccessful authentication
 
 Then('an authentication error should be displayed', async () => {
-  console.log('\n========== AUTHENTICATION ERROR CHECK ==========');
+  log.info('\n========== AUTHENTICATION ERROR CHECK ==========');
 
   let errorTexts: string[] = [];
 
@@ -154,7 +156,7 @@ Then('an authentication error should be displayed', async () => {
     timeoutMsg: 'The expected Login failed alert with Invalid credentials was not displayed.'
   });
 
-  console.log('Authentication error:', errorTexts.join(' | '));
+  log.info('Authentication error:', errorTexts.join(' | '));
 
   // The default React Native Alert button is OK.
   const okButton = $('android=new UiSelector().text("OK")');
@@ -166,11 +168,11 @@ Then('an authentication error should be displayed', async () => {
 
   await okButton.click();
 
-  console.log('Authentication error alert dismissed.');
+  log.info('Authentication error alert dismissed.');
 });
 
 Then('the merchant should be denied access', async () => {
-  console.log('\n========== ACCESS DENIAL CHECK ==========');
+  log.info('\n========== ACCESS DENIAL CHECK ==========');
 
   // After dismissing the alert, the login screen should be visible.
   await verifyLoginScreen();
@@ -184,6 +186,6 @@ Then('the merchant should be denied access', async () => {
     timeoutMsg: 'The merchant was incorrectly allowed into the dashboard.'
   });
 
-  console.log('Merchant remained on the login screen.');
-  console.log('Dashboard access was correctly denied.');
+  log.info('Merchant remained on the login screen.');
+  log.info('Dashboard access was correctly denied.');
 });
