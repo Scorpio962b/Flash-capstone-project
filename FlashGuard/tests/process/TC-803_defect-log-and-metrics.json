@@ -1,0 +1,4 @@
+{
+  "name": "TC-803 Defect log with root causes and metrics summary",
+  "description": "FR-010 P1. docs/defect-log.csv lists defects with root cause; pass/fail counts and execution times are in the metrics summary. Checked by scripts/process-checks.mjs"
+}

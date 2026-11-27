@@ -1,6 +1,6 @@
 # Requirements Traceability Matrix
 
-Generated: 2026-11-26T09:58:25.096Z
+Generated: 2026-11-27T06:57:16.009Z
 
 | Requirement | Test ID | Test title | Layer | Priority | Status | Evidence | Defect ID |
 |---|---|---|---|---|---|---|---|
@@ -141,6 +141,6 @@ Generated: 2026-11-26T09:58:25.096Z
 | FR-007 | TC-MOB-010 | Flash-Guard Mobile Fund Transfers | mobile | P0 | Not run | tests/mobile/features/FundTransfers/TC_MOB_010_fund-transfers.feature | |
 | FR-007 | TC-MOB-011 | Flash-Guard Merchant Authentication | mobile | P0 | Not run | tests/mobile/features/Authentication/TC_MOB_011_authentication.feature | |
 | FR-007 | TC-MOB-012 | Flash-Guard Camera Face-Check Authentication | mobile | P0 | Not run | tests/mobile/features/Authentication/TC_MOB_012_camera-face-check-cancel.feature | |
-| FR-008 | - | **NOT COVERED** | | | | | |
+| FR-008 | TC-801 | pipeline-github-actions | other | P0 | Failed | results/other/ | |
 | FR-009 | - | **NOT COVERED** | | | | | |
-| FR-010 | - | **NOT COVERED** | | | | | |
+| FR-010 | TC-803 | defect-log-and-metrics | other | P1 | Passed | results/other/ | |

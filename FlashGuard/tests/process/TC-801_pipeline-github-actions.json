@@ -1,0 +1,4 @@
+{
+  "name": "TC-801 Pipeline runs on GitHub Actions on every push",
+  "description": "FR-008 P0. Workflow in .github/workflows triggers on push and runs UI, API, DB and mobile in parallel within 30 minutes. Evidence: docs/evidence/github-actions-green-run.png. Checked by scripts/process-checks.mjs"
+}

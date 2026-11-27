@@ -75,3 +75,5 @@ TC-UI-003,"Login",ui,FR-001,P0
 TC-UI-004,"User dashboard and account information",ui,FR-002,P0
 TC-UI-005,"Notifications and Alerts",ui,FR-006,P1
 TC-UI-006,"Transfer funds",ui,FR-003,P0
+TC-801,FR-008,P0
+TC-803,FR-010,P1

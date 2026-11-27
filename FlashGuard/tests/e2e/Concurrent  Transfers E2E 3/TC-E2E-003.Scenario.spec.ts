@@ -194,7 +194,7 @@ Then('no duplicate transactions should exist', async () => {
 
   // both amounts can be identical (50 and 50), so duplicates are judged by id and by count, not by amount
   expect(new Set(fresh.map((t) => t.id)).size).toBe(fresh.length);
-  expect(fresh.length).toBe(2);
+  expect(fresh).toHaveLength(2);
 });
 
 Then('the mobile transfer should be submitted successfully', async () => {

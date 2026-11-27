@@ -136,6 +136,6 @@ FR-007,TC-MOB-009,"Mobile Settings and Responsiveness",mobile,P1,Not run,"tests/
 FR-007,TC-MOB-010,"Flash-Guard Mobile Fund Transfers",mobile,P0,Not run,"tests/mobile/features/FundTransfers/TC_MOB_010_fund-transfers.feature",
 FR-007,TC-MOB-011,"Flash-Guard Merchant Authentication",mobile,P0,Not run,"tests/mobile/features/Authentication/TC_MOB_011_authentication.feature",
 FR-007,TC-MOB-012,"Flash-Guard Camera Face-Check Authentication",mobile,P0,Not run,"tests/mobile/features/Authentication/TC_MOB_012_camera-face-check-cancel.feature",
-FR-008,,NOT COVERED,,,,,
+FR-008,TC-801,"pipeline-github-actions",other,P0,Failed,"results/other/",
 FR-009,,NOT COVERED,,,,,
-FR-010,,NOT COVERED,,,,,
+FR-010,TC-803,"defect-log-and-metrics",other,P1,Passed,"results/other/",

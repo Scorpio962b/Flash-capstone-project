@@ -247,6 +247,7 @@ test.describe('Flash-Guard - Transfer Integration', () => {
     ).toBeVisible();
 
   });
+
   const toCents = (value: string | number) => Math.round(Number(value) * 100);
 
   const getAccountBalanceCents = (accountId: number): number => {
