@@ -37,6 +37,7 @@
     "@wdio/logger": "^10.1.0",
     "@wdio/mocha-framework": "^10.1.0",
     "@wdio/spec-reporter": "^10.1.0",
+    "allure-playwright": "^3.15.0",
     "appium": "^3.9.0",
     "appium-inspector-plugin": "^2026.11.6",
     "appium-uiautomator2-driver": "^8.6.0",
