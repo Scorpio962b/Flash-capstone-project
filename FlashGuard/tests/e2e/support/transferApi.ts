@@ -15,13 +15,19 @@ export interface HistoryTx {
   title?: string;
   created_at?: string;
 }
+
+export type ApiResponseBody = Record<string, unknown>;
+
 export interface TransferResult {
   ok: boolean;
   httpStatus: number;
-  body: any;
+  body: ApiResponseBody;
   startedAt: number;
   finishedAt: number;
 }
+
+const isRecord = (value: unknown): value is ApiResponseBody =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const authHeaders = (token?: string) => ({
   'Content-Type': 'application/json',
@@ -34,8 +40,17 @@ async function call<T>(method: 'GET' | 'POST', path: string, token?: string, bod
     headers: authHeaders(token),
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  const json: any = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(`${method} ${path} -> ${res.status}: ${json?.message ?? 'request failed'}`);
+
+  const json: unknown = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    const message = isRecord(json) && typeof json.message === 'string'
+      ? json.message
+      : 'request failed';
+
+    throw new Error(`${method} ${path} -> ${res.status}: ${message}`);
+  }
+
   return json as T;
 }
 
@@ -46,6 +61,7 @@ export async function loginAs(channel: 'web' | 'test-runner' = 'web'): Promise<S
     password: PASSWORD,
     deviceMetadata: { platform: channel, alias: channel === 'web' ? 'chrome-desktop' : 'test-runner' },
   });
+
   return { token: body.token, userId: body.user.id, channel };
 }
 
@@ -69,6 +85,9 @@ export async function transfer(s: Session, recipientAccountId: number, amount: n
     headers: authHeaders(s.token),
     body: JSON.stringify({ senderAccountId: s.userId, recipientAccountId, amount }),
   });
-  const body = await res.json().catch(() => ({}));
+
+  const responseBody: unknown = await res.json().catch(() => ({}));
+  const body = isRecord(responseBody) ? responseBody : {};
+
   return { ok: res.ok, httpStatus: res.status, body, startedAt, finishedAt: Date.now() };
 }

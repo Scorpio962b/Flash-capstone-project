@@ -1,4 +1,3 @@
-
 declare const require: (moduleName: string) => {
   execFileSync: (
     file: string,
@@ -67,7 +66,9 @@ export function executeSql(query: string): string {
         ? String(error.stderr || '')
         : '';
 
-    throw new Error(`SQL Server query failed: ${stderr || message}`);
+    throw new Error(`SQL Server query failed: ${stderr || message}`, {
+      cause: error,
+    });
   }
 }
 

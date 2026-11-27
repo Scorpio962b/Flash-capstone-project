@@ -1,5 +1,10 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-const h = require("../support/helpers");
+import * as h from "../support/helpers";
+
+interface AppiumDriver {
+  terminateApp(appId: string): Promise<void>;
+  activateApp(appId: string): Promise<void>;
+}
 
 const NEW_PASSWORD = "NewPass123!";
 
@@ -26,9 +31,11 @@ Then(/^a password changed confirmation should be displayed$/, async () => {
 });
 
 Then(/^the merchant should be able to log in with the new password$/, async () => {
+  const driver = (globalThis as typeof globalThis & { driver: AppiumDriver }).driver;
+
   // current build has no logout, so relaunch the app to reach the login screen
-  await (globalThis as any).driver.terminateApp(h.APP_PACKAGE);
-  await (globalThis as any).driver.activateApp(h.APP_PACKAGE);
+  await driver.terminateApp(h.APP_PACKAGE);
+  await driver.activateApp(h.APP_PACKAGE);
   await h.login(h.EMAIL, h.ctx.newPassword);
   await h.waitShown(h.DASHBOARD.netWorth(), "Dashboard");
 });
