@@ -1,4 +1,3 @@
-
 # CI quality gates for FlashGuard
 # Runs on pull requests and pushes to main.
 
@@ -61,6 +60,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    # CHANGED: env vars docker compose reads (no .env file in CI)
+    env:
+      API_PORT: '4000'
+      WEB_PORT: '3000'
+      MOBILE_PORT: '8081'
+      DB_HOST: host.docker.internal
+      DB_PORT: '1433'
+      DB_NAME: FlashGuard
+      DB_USER: sa
+      DB_PASSWORD: ${{ secrets.CI_DB_PASSWORD || 'FlashGuard_CI_Passw0rd!' }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET || 'ci-only-jwt-secret-not-for-prod' }}
+
+    # CHANGED: throwaway SQL Server for CI (locally you use the one on your PC)
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: 'Y'
+          MSSQL_SA_PASSWORD: ${{ secrets.CI_DB_PASSWORD || 'FlashGuard_CI_Passw0rd!' }}
+        ports:
+          - 1433:1433
+
     steps:
       - uses: actions/checkout@v5
 
@@ -72,12 +93,30 @@ jobs:
 
       - run: npm ci
 
+      # CHANGED: new step
+      - name: Wait for SQL Server
+        run: |
+          for i in $(seq 1 40); do
+            if docker exec ${{ job.services.sqlserver.id }} \
+                 /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$DB_PASSWORD" -Q "SELECT 1" > /dev/null 2>&1; then
+              echo "SQL Server is ready"; exit 0
+            fi
+            echo "Waiting for SQL Server ($i/40)..."; sleep 3
+          done
+          echo "::error::SQL Server did not start"
+          docker logs ${{ job.services.sqlserver.id }}
+          exit 1
+
+      # CHANGED: new step - runs 01-schema.sql + 99-reset-and-seed.sql
+      - name: Seed database
+        run: docker compose --profile seed run --rm app-seed
+
       - name: Start stack
         run: docker compose up -d --build
 
       - name: Wait for API and web app
         run: |
-          for url in http://localhost:4000/health http://localhost:3000; do
+          for url in "http://localhost:${API_PORT}/health" "http://localhost:${WEB_PORT}"; do
             for i in $(seq 1 60); do
               curl -fsS "$url" > /dev/null && break
               sleep 3
@@ -130,7 +169,7 @@ jobs:
           docker run --rm --network host \
             -v "$PWD/results/zap:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py -t http://localhost:3000 \
+            zap-baseline.py -t "http://localhost:${WEB_PORT}" \
             -r zap-report.html -J zap-report.json -I
 
       - name: Metrics
@@ -141,7 +180,7 @@ jobs:
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6          # CHANGED: v5 -> v6 (Node 24)
         with:
           name: playwright-report
           path: FlashGuard/playwright-report/
@@ -149,7 +188,7 @@ jobs:
 
       - name: Upload test results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6          # CHANGED
         with:
           name: test-results
           path: FlashGuard/results/
@@ -157,14 +196,20 @@ jobs:
 
       - name: Upload Allure results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6          # CHANGED
         with:
           name: allure-results
           path: FlashGuard/allure-results/
           if-no-files-found: ignore
 
+      # CHANGED: new step
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker compose logs --no-color || true
+
       - name: Stop stack
         if: always()
+        continue-on-error: true                   # CHANGED: teardown can't mask the real error
         run: docker compose down -v
 
   allure:
@@ -190,7 +235,7 @@ jobs:
 
       - run: npm ci
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6        # CHANGED
         with:
           name: allure-results
           path: FlashGuard/allure-results
@@ -204,7 +249,7 @@ jobs:
             echo "::warning::No Allure results to report"
           fi
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6          # CHANGED
         with:
           name: allure-report
           path: FlashGuard/allure-report/
