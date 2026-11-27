@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test';
 import { executeSql, getLatestLoginAuditId } from '../helpers/database';
 import { loginAsAlice } from '../helpers/scenario1-actions';
@@ -150,9 +151,6 @@ test.describe('Flash-Guard - Transfer Integration', () => {
        body: JSON.stringify(notificationRequests, null, 2),
        contentType: 'application/json'
     });
-
-    console.log( 'E2E-011 notification-related requests:', notificationRequests);
-
   });
 
 
@@ -287,7 +285,13 @@ test.describe('Flash-Guard - Transfer Integration', () => {
   // an installed Android app (APK_PATH or APP_PACKAGE/APP_ACTIVITY).
   test('E2E-005: Mobile history shows the transfer and matching balance', async ({ request }) => {
     const mobileConfig = getMobileSessionConfig();
-    test.skip(!mobileConfig, 'Set APK_PATH or APP_PACKAGE (and optionally APPIUM_SERVER_URL) to run mobile Appium checks.');
+
+    // eslint-disable-next-line playwright/no-skipped-test -- Mobile test requires optional Appium configuration.
+    test.skip(
+      !mobileConfig,
+      'Set APK_PATH or APP_PACKAGE (and optionally APPIUM_SERVER_URL) to run mobile Appium checks.'
+    );
+
     test.setTimeout(120_000);
     
     const loginResponse = await request.post(`${API_URL}/auth/login`, {

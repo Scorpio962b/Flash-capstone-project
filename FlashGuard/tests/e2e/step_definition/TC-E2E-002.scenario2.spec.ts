@@ -4,7 +4,6 @@ import { test, expect } from '@playwright/test';
 import { runQuery, closeDb } from '../support/db';
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
-const API_PORT = process.env.API_PORT ?? '4000';
 const EMAIL = process.env.ALICE_EMAIL!;
 const PASSWORD = process.env.ALICE_PASSWORD!;
 
@@ -14,18 +13,18 @@ test.afterAll(async () => {
   await closeDb();
 });
 
-async function maxId(table: 'transactions' | 'ledger_entries' | 'audit_log'): Promise<number> {
-  const [{ m }] = await runQuery(`SELECT ISNULL(MAX(id), 0) AS m FROM ${table}`);
+async function maxId(
+  table: 'transactions' | 'ledger_entries' | 'audit_log',
+): Promise<number> {
+  const [{ m }] = await runQuery(
+    `SELECT ISNULL(MAX(id), 0) AS m FROM ${table}`,
+  );
   return m;
 }
 
-test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page }) => {
-  page.on('response', (response) => {
-    if (response.url().includes(`:${API_PORT}`)) {
-      console.log(response.request().method(), response.status(), response.url());
-    }
-  });
-
+test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({
+  page,
+}) => {
   const [{ id: aliceId, balance: balanceBefore }] = await runQuery(
     'SELECT id, balance FROM accounts WHERE email = @email',
     { email: EMAIL },
@@ -55,7 +54,9 @@ test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page
       await page.getByRole('radio', { name: /Alice Ledger/ }).check();
       await page.getByText(new RegExp(`${SANCTIONED_RECIPIENT}.*Select`)).click();
       await page.getByRole('spinbutton').fill('100');
-      await page.getByRole('textbox', { name: /Invoice INV/ }).fill('Compliance test');
+      await page.getByRole('textbox', { name: /Invoice INV/ }).fill(
+        'Compliance test',
+      );
 
       const responsePromise = page.waitForResponse(
         (response) =>
@@ -64,9 +65,11 @@ test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page
         { timeout: 10000 },
       );
 
-      await page.getByRole('button', {
-        name: /transfer|send|confirm|continue|pay|submit/i,
-      }).click();
+      await page
+        .getByRole('button', {
+          name: /transfer|send|confirm|continue|pay|submit/i,
+        })
+        .click();
 
       return responsePromise;
     },
@@ -77,7 +80,6 @@ test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page
 
     const body = await transferResponse.json();
 
-    console.log('Transfer body:', JSON.stringify(body));
     expect(body.message).toBeTruthy();
 
     expect.soft(
@@ -93,7 +95,6 @@ test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page
       .first();
 
     await expect(error).toBeVisible();
-    console.log('UI error text:', await error.innerText());
 
     await expect(error).not.toContainText(/500|stack|exception|undefined/i);
     await expect(page.getByText(/transfer successful/i)).toHaveCount(0);
@@ -139,23 +140,21 @@ test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page
         { id: aliceId, auditIdBefore },
       );
 
-    await expect.poll(
-      async () => {
-        const rows = await getRows();
-        return rows.some((row) => row.action !== 'login');
-      },
-      {
-        message: 'Waiting for the failed transfer attempt in the audit log',
-        timeout: 5000,
-        intervals: [500],
-      },
-    ).toBe(true);
+    await expect
+      .poll(
+        async () => {
+          const rows = await getRows();
+          return rows.some((row) => row.action !== 'login');
+        },
+        {
+          message: 'Waiting for the failed transfer attempt in the audit log',
+          timeout: 5000,
+          intervals: [500],
+        },
+      )
+      .toBe(true);
 
     const rows = await getRows();
-
-    console.log('Audit entries written during this test:');
-    console.table(rows);
-
     const attempt = rows.filter((row) => row.action !== 'login');
 
     expect.soft(
@@ -163,14 +162,12 @@ test('TC-E2E-002 @P0 @defect Scenario 2: Failed compliance check', async ({ page
       'Audit log should have an entry for the failed transfer attempt',
     ).toBeGreaterThan(0);
 
-    if (attempt.length > 0) {
-      expect.soft(
-        JSON.stringify(attempt.map((row) => row.action)),
-      ).toMatch(/transfer/i);
+    expect
+      .soft(JSON.stringify(attempt.map((row) => row.action)))
+      .toMatch(/transfer/i);
 
-      expect.soft(
-        JSON.stringify(attempt.map((row) => row.metadata)),
-      ).toMatch(/sanction|compliance|blocked|not valid/i);
-    }
+    expect
+      .soft(JSON.stringify(attempt.map((row) => row.metadata)))
+      .toMatch(/sanction|compliance|blocked|not valid/i);
   });
 });
