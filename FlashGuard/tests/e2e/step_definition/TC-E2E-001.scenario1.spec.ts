@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { executeSql, getLatestLoginAuditId } from '../helpers/database';
-import { loginAsAlice, prepareTransfer } from '../helpers/scenario1-actions';
+import { loginAsAlice } from '../helpers/scenario1-actions';
 import {
   ACCOUNT_ID,
   API_URL,

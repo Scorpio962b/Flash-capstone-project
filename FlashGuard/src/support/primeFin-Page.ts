@@ -1,4 +1,4 @@
-import { $, $$, browser, driver } from '@wdio/globals';
+import { $, $$, browser } from '@wdio/globals';
 import { normaliseStatus, parseZar } from '../support/helper';
 
 /**

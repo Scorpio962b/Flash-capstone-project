@@ -1,18 +1,19 @@
+
 {
   "name": "primefin-appium-tests",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "wdio run wdio.conf.ts",
+    "test": "wdio run Wdio.conf.ts",
     "typecheck": "tsc --noEmit --target ES2020 --module commonjs --moduleResolution node --skipLibCheck --types node,webdriverio --esModuleInterop \"Concurrent Transfer.steps.ts\" \"Wdio.conf.ts\" transfer.page.ts primefin.page.ts ../support/transferApi.ts ../support/helpers.ts",
-    "test:concurrency": "cross-env TAGS=@concurrency wdio run wdio.conf.ts",
-    "test:mobile-transfer": "cross-env TAGS=@mobile-transfer wdio run wdio.conf.ts",
-    "test:balance": "cross-env TAGS=@balance wdio run wdio.conf.ts",
-    "test:scroll": "cross-env TAGS=@scroll wdio run wdio.conf.ts",
-    "test:filter": "cross-env TAGS=\"@filter and not @wip\" wdio run wdio.conf.ts",
-    "test:history": "cross-env TAGS=\"@history and not @wip\" wdio run wdio.conf.ts",
-    "test:e2e3": "cross-env TAGS=@e2e3 wdio run wdio.conf.ts",
-    "test:wip": "cross-env TAGS=@wip wdio run wdio.conf.ts"
+    "test:concurrency": "cross-env TAGS=@concurrency wdio run Wdio.conf.ts",
+    "test:mobile-transfer": "cross-env TAGS=@mobile-transfer wdio run Wdio.conf.ts",
+    "test:balance": "cross-env TAGS=@balance wdio run Wdio.conf.ts",
+    "test:scroll": "cross-env TAGS=@scroll wdio run Wdio.conf.ts",
+    "test:filter": "cross-env TAGS=\"@filter and not @wip\" wdio run Wdio.conf.ts",
+    "test:history": "cross-env TAGS=\"@history and not @wip\" wdio run Wdio.conf.ts",
+    "test:e2e3": "cross-env TAGS=@e2e wdio run Wdio.conf.ts",
+    "test:wip": "cross-env TAGS=@wip wdio run Wdio.conf.ts"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

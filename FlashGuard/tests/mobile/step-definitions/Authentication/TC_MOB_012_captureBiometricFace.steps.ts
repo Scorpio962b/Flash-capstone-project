@@ -1,4 +1,4 @@
-import { Given, When, Then, Before } from '@cucumber/cucumber';
+import { When, Then, Before } from '@cucumber/cucumber';
 // ======================================================
 // MOB-AUTH-03.2: CAMERA FACE-CHECK AUTHENTICATION
 // ======================================================

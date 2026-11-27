@@ -6,7 +6,7 @@ function winPathFromWsl(linuxPath) {
       encoding: "utf8",
     }).trim();
     return out;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

@@ -17,7 +17,7 @@
     "test:login:chrome": "cross-env BROWSER=chrome cucumber-js --config cucumber.js tests/ui/features/login.feature",
     "test:mobile": "wdio run ./tests/mobile/wdio.conf.js",
     "test:mobile:cucumber": "wdio run ./tests/mobile/wdio.cucumber.conf.ts",
-    "e2e:typecheck": "tsc -p e2e/tsconfig.json --noEmit",
+    "e2e:typecheck": "tsc -p tests/e2e/tsconfig.json --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report"

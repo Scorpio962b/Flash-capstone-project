@@ -1,0 +1,19 @@
+﻿{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "types": ["node", "webdriverio"],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "paths": {
+      "webdriverio": [
+        "./Concurrent  Transfers E2E 3/node_modules/webdriverio"
+      ]
+    }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["**/node_modules"]
+}

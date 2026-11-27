@@ -28,7 +28,7 @@ function walk(dir, out = []) {
   return out;
 }
 const rel = (p) => path.relative(root, p).split(path.sep).join('/');
-const layerOf = (f) => (f.match(/^tests\/(api|db|mobile|ui|e2e)\//) || [, 'other'])[1];
+const layerOf = (f) => (f.match(/^tests\/(api|db|mobile|ui|e2e)\//) || [null, 'other'])[1];
 const normId = (id) => id.toUpperCase().replace(/_/g, '-');
 
 // --- 1. discover test cases (one per ID; several files with the same ID are merged) ---
@@ -126,3 +126,4 @@ fs.writeFileSync(path.join(docsDir, 'RTM.md'), rtmMd.join('\n') + '\n');
 fs.writeFileSync(path.join(docsDir, 'Coverage-Analysis.md'), cov.join('\n') + '\n');
 console.log(cov.slice(0, 8).join('\n'));
 console.log('\nWritten: docs/RTM.csv, docs/RTM.md, docs/Coverage-Analysis.md');
+

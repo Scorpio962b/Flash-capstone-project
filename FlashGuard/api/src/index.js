@@ -84,7 +84,6 @@ async function getPool() {
   }
 
   throw lastError || new Error("Failed to connect to SQL Server");
-  return pool;
 }
 
 function toMoney(value) {
@@ -107,7 +106,7 @@ function generateToken(accountId) {
 function verifyToken(token) {
   try {
     return jwt.verify(token, JWT_SECRET);
-  } catch (err) {
+  } catch {
     return null;
   }
 }
@@ -136,9 +135,11 @@ app.post("/auth/login", async (req, res) => {
     .query(
       "SELECT TOP 1 id, email, full_name, is_active FROM dbo.accounts WHERE email = @email",
     );
-  if (!account.recordset.length) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
+if (!account.recordset.length || !account.recordset[0].is_active) {
+  return res.status(401).json({
+    message: "Invalid credentials or inactive account",
+  });
+}
   await p
     .request()
     .input("account_id", sql.Int, account.recordset[0].id)
@@ -166,7 +167,7 @@ app.post("/auth/register", async (req, res) => {
         VALUES (@email, @full_name, 'offline-demo', 0, 1)
       `);
     return res.status(201).json(result.recordset[0]);
-  } catch (_e) {
+  } catch {
     return res.status(409).json({ message: "Email already exists" });
   }
 });
@@ -370,67 +371,175 @@ app.post("/transactions/transfer", async (req, res) => {
   }
 });
 
+
 app.post("/transactions/transfer/:id/authorize", async (req, res) => {
   const id = Number(req.params.id);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ message: "Invalid transaction ID" });
+  }
+
   const p = await getPool();
   const tx = new sql.Transaction(p);
-  await tx.begin();
+  let transactionStarted = false;
+
   try {
+    await tx.begin();
+    transactionStarted = true;
+
+    // Lock the pending transaction so concurrent requests cannot
+    // authorize the same transaction more than once.
     const readRequest = new sql.Request(tx);
     const existing = await readRequest
       .input("id", sql.Int, id)
-      .query("SELECT * FROM dbo.transactions WHERE id = @id");
-    if (!existing.recordset.length) throw new Error("Transaction not found");
+      .query(`
+        SELECT *
+        FROM dbo.transactions WITH (UPDLOCK, HOLDLOCK)
+        WHERE id = @id
+      `);
+
+    if (!existing.recordset.length) {
+      throw new Error("Transaction not found");
+    }
+
     const tr = existing.recordset[0];
-    if (tr.status !== "pending")
+
+    if (tr.status !== "pending") {
       throw new Error("Only pending transactions can be authorized");
+    }
 
-    const balanceRequest = new sql.Request(tx);
-    await balanceRequest
-      .input("sender_id", sql.Int, tr.sender_account_id)
-      .input("recipient_id", sql.Int, tr.recipient_account_id)
-      .input("amount", sql.Decimal(18, 2), tr.amount).query(`
-        UPDATE dbo.accounts SET balance = balance - @amount WHERE id = @sender_id;
-        UPDATE dbo.accounts SET balance = balance + @amount WHERE id = @recipient_id;
+    const senderId = Number(tr.sender_account_id);
+    const recipientId = Number(tr.recipient_account_id);
+    const amount = Number(tr.amount);
+
+    if (
+      !Number.isInteger(senderId) ||
+      !Number.isInteger(recipientId) ||
+      senderId <= 0 ||
+      recipientId <= 0 ||
+      senderId === recipientId ||
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      throw new Error("Invalid transaction details");
+    }
+
+    // Debit only an active sender with sufficient funds.
+    const debitRequest = new sql.Request(tx);
+    const debit = await debitRequest
+      .input("sender_id", sql.Int, senderId)
+      .input("amount", sql.Decimal(18, 2), amount)
+      .query(`
+        UPDATE dbo.accounts
+        SET balance = balance - @amount
+        WHERE id = @sender_id
+          AND is_active = 1
+          AND balance >= @amount
       `);
 
-    const writeRequest = new sql.Request(tx);
-    await writeRequest
+    if (debit.rowsAffected[0] !== 1) {
+      throw new Error(
+        "Sender account is inactive or has insufficient funds"
+      );
+    }
+
+    // Credit only an active recipient.
+    const creditRequest = new sql.Request(tx);
+    const credit = await creditRequest
+      .input("recipient_id", sql.Int, recipientId)
+      .input("amount", sql.Decimal(18, 2), amount)
+      .query(`
+        UPDATE dbo.accounts
+        SET balance = balance + @amount
+        WHERE id = @recipient_id
+          AND is_active = 1
+      `);
+
+    if (credit.rowsAffected[0] !== 1) {
+      throw new Error("Recipient account is inactive or does not exist");
+    }
+
+    // Change status only if the transaction is still pending.
+    const statusRequest = new sql.Request(tx);
+    const statusUpdate = await statusRequest
       .input("transaction_id", sql.Int, id)
-      .input("sender_id", sql.Int, tr.sender_account_id)
-      .input("recipient_id", sql.Int, tr.recipient_account_id)
-      .input("amount", sql.Decimal(18, 2), tr.amount).query(`
+      .query(`
         UPDATE dbo.transactions
-        SET status = 'completed', authorized_at = SYSUTCDATETIME(), settled_at = SYSUTCDATETIME()
-        WHERE id = @transaction_id;
-        INSERT INTO dbo.ledger_entries (transaction_id, account_id, entry_type, amount)
-        VALUES (@transaction_id, @sender_id, 'debit', @amount),
-               (@transaction_id, @recipient_id, 'credit', @amount);
+        SET
+          status = 'completed',
+          authorized_at = SYSUTCDATETIME(),
+          settled_at = SYSUTCDATETIME()
+        WHERE id = @transaction_id
+          AND status = 'pending'
       `);
 
-    await writeRequest
-      .input("account_id", sql.Int, tr.sender_account_id)
+    if (statusUpdate.rowsAffected[0] !== 1) {
+      throw new Error("Transaction is no longer pending");
+    }
+
+    // Record both sides of the ledger entry.
+    const ledgerRequest = new sql.Request(tx);
+    await ledgerRequest
+      .input("transaction_id", sql.Int, id)
+      .input("sender_id", sql.Int, senderId)
+      .input("recipient_id", sql.Int, recipientId)
+      .input("amount", sql.Decimal(18, 2), amount)
+      .query(`
+        INSERT INTO dbo.ledger_entries
+          (transaction_id, account_id, entry_type, amount)
+        VALUES
+          (@transaction_id, @sender_id, 'debit', @amount),
+          (@transaction_id, @recipient_id, 'credit', @amount)
+      `);
+
+    // Record the authorization in the audit log.
+    const auditRequest = new sql.Request(tx);
+    await auditRequest
+      .input("account_id", sql.Int, senderId)
       .input("action", sql.NVarChar(100), "transfer_authorized")
       .input(
         "metadata",
         sql.NVarChar(sql.MAX),
-        JSON.stringify({ transaction_id: id }),
+        JSON.stringify({ transaction_id: id })
       )
-      .query(
-        "INSERT INTO dbo.audit_log (account_id, action, metadata) VALUES (@account_id, @action, @metadata)",
-      );
+      .query(`
+        INSERT INTO dbo.audit_log
+          (account_id, action, metadata)
+        VALUES
+          (@account_id, @action, @metadata)
+      `);
 
     await tx.commit();
+    transactionStarted = false;
+
     const finalResult = await p
       .request()
       .input("id", sql.Int, id)
-      .query("SELECT * FROM dbo.transactions WHERE id = @id");
+      .query(`
+        SELECT *
+        FROM dbo.transactions
+        WHERE id = @id
+      `);
+
     return res.json(finalResult.recordset[0]);
+
   } catch (error) {
-    await tx.rollback();
-    return res.status(400).json({ message: error.message });
+    if (transactionStarted) {
+      try {
+        await tx.rollback();
+      } catch (rollbackError) {
+        console.error("Rollback failed:", rollbackError);
+      }
+    }
+
+    console.error("Transfer authorization failed:", error);
+
+    return res.status(400).json({
+      message: error.message || "Transfer authorization failed"
+    });
   }
 });
+
 
 app.post("/transactions/service-purchase", async (req, res) => {
   const senderId = Number(req.body.senderAccountId);

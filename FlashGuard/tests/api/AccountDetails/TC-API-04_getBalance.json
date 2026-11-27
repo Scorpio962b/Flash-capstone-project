@@ -1,6 +1,7 @@
+
 [
-   {
-    "testId": "T-API-ACC-004",
+  {
+    "testId": "T-API-ACC-004-1",
     "name": "Get account balance (account 1)",
     "method": "GET",
     "url": "http://localhost:4000/accounts/1/balance",
@@ -12,8 +13,8 @@
       }
     }
   },
-    {
-    "testId": "T-API-ACC-004",
+  {
+    "testId": "T-API-ACC-004-2",
     "name": "Get account balance (account 2)",
     "method": "GET",
     "url": "http://localhost:4000/accounts/2/balance",
@@ -24,6 +25,5 @@
         "balance": 2500
       }
     }
-  },
-
+  }
 ]

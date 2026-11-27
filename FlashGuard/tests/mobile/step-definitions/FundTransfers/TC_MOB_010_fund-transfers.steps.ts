@@ -34,9 +34,6 @@ const transferFormHeading = () =>
 const beneficiaryName = (name: string) =>
   $(`android=new UiSelector().text("${name}")`);
 
-const recipientSearchField = () =>
-  $('android=new UiSelector().className("android.widget.EditText").instance(0)');
-
 const amountField = () =>
   $('android=new UiSelector().className("android.widget.EditText").instance(1)');
 

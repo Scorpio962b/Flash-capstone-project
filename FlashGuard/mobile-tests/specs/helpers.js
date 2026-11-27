@@ -26,7 +26,7 @@ async function login() {
       timeout: 10000,
     });
     await (await $(byText('OK'))).click();
-  } catch (e) {
+  } catch {
     throw new Error('Login alert not shown - is the backend running on port 4000?');
   }
   await (await $(byRegex('(?i)quick actions'))).waitForDisplayed({ timeout: 20000 });

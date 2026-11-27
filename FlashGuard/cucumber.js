@@ -4,6 +4,8 @@ module.exports = {
   default: {
     requireModule: ['tsx/cjs'],
 
+    paths: ['tests/ui/features/**/*.feature'],
+
     require: [
       'tests/support/**/*.ts',
       'tests/ui/step definition/**/*.ts'
