@@ -12,17 +12,18 @@ services:
     working_dir: /app
     environment:
       NODE_ENV: development
-      PORT: ${API_PORT:-4000}                              # CHANGED: default port
-      # Local: host SQL Server via host.docker.internal. CI: SQL Server service container.
-      DB_HOST: ${DB_HOST:-host.docker.internal}            # CHANGED: overridable
-      DB_PORT: ${DB_PORT:-1433}                            # CHANGED: overridable
-      DB_NAME: ${DB_NAME:?DB_NAME is not set - create a .env file}            # CHANGED: clear error if missing
+      PORT: ${API_PORT:-4000}
+      # Container -> SQL Server always goes via the host gateway (local PC or CI service container).
+      # CHANGED: uses its own variable so tests can use DB_HOST=localhost without breaking the API
+      DB_HOST: ${API_DB_HOST:-host.docker.internal}
+      DB_PORT: ${DB_PORT:-1433}
+      DB_NAME: ${DB_NAME:?DB_NAME is not set - create a .env file}
       DB_USER: ${DB_USER:?DB_USER is not set - create a .env file}
       DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set - create a .env file}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is not set - create a .env file}
     ports:
-      - "${API_PORT:-4000}:${API_PORT:-4000}"              # CHANGED: no more "invalid proto"
-    # CHANGED: makes host.docker.internal resolve on Linux (GitHub runners); harmless on Docker Desktop
+      - "${API_PORT:-4000}:${API_PORT:-4000}"
+    # Makes host.docker.internal resolve on Linux (GitHub runners); harmless on Docker Desktop
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -32,7 +33,7 @@ services:
       dockerfile: Dockerfile
     container_name: fg-web
     ports:
-      - "${WEB_PORT:-3000}:80"                             # CHANGED: default port
+      - "${WEB_PORT:-3000}:80"
     depends_on:
       api:
         condition: service_started
@@ -43,7 +44,7 @@ services:
       dockerfile: Dockerfile
     container_name: fg-mobile
     ports:
-      - "${MOBILE_PORT:-8081}:80"                          # CHANGED: default port
+      - "${MOBILE_PORT:-8081}:80"
     depends_on:
       api:
         condition: service_started

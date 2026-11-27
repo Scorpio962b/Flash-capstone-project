@@ -1,4 +1,3 @@
-
 import {
   BeforeAll,
   AfterAll,
@@ -16,20 +15,25 @@ import { DashboardPage } from "../../src/pages/dashboardPage";
 
 setDefaultTimeout(60 * 1000);
 
+// CHANGED: headless in CI (no display on runners), headed locally.
+// Force locally with:  $env:HEADLESS="true"  (or "false")
+const isCI = process.env.CI === "true";
+const headless =
+  process.env.HEADLESS !== undefined ? process.env.HEADLESS === "true" : isCI;
+
+// CHANGED: base URL overridable, defaults to the web container port
+const baseURL = process.env.BASE_URL ?? "http://localhost:3000";
+
 let browser: Browser;
 
 BeforeAll(async function () {
-  browser = await chromium.launch({
-    headless: false
-  });
+  browser = await chromium.launch({ headless });
 });
 
 Before(async function (this: UserWorld, { pickle }) {
   this.browser = browser;
 
-  this.context = await browser.newContext({
-    baseURL: "http://localhost:3000"
-  });
+  this.context = await browser.newContext({ baseURL });
 
   this.page = await this.context.newPage();
 
